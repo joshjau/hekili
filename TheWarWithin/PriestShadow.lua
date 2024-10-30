@@ -141,17 +141,17 @@ spec:RegisterTalents( {
     binding_heals              = {  82678, 368275, 1 }, -- 20% of Flash Heal healing on other targets also heals you.
     blessed_recovery           = {  82720, 390767, 1 }, -- After being struck by a melee or ranged critical hit, heal 20% of the damage taken over 6 sec.
     body_and_soul              = {  82706,  64129, 1 }, -- Power Word: Shield and Leap of Faith increase your target's movement speed by 40% for 3 sec.
-    cauterizing_shadows        = {  82687, 459990, 1 }, -- When your Shadow Word: Pain expires or is refreshed with less than 5 sec remaining, a nearby ally within 46 yards is healed for 3,528.
-    crystalline_reflection     = {  82681, 373457, 2 }, -- Power Word: Shield instantly heals the target for 4,116 and reflects 10% of damage absorbed.
+    cauterizing_shadows        = {  82687, 459990, 1 }, -- When your Shadow Word: Pain expires or is refreshed with less than 5 sec remaining, a nearby ally within 46 yards is healed for 4,427.
+    crystalline_reflection     = {  82681, 373457, 2 }, -- Power Word: Shield instantly heals the target for 5,165 and reflects 10% of damage absorbed.
     death_and_madness          = {  82711, 321291, 1 }, -- If your Shadow Word: Death fails to kill a target at or below 20% health, its cooldown is reset. Cannot occur more than once every 10 sec. If a target dies within 7 sec after being struck by your Shadow Word: Death, you gain 8 Insanity.
     dispel_magic               = {  82715,    528, 1 }, -- Dispels Magic on the enemy target, removing 1 beneficial Magic effect.
-    divine_star                = {  82680, 122121, 1 }, -- Throw a Divine Star forward 31 yds, healing allies in its path for 6,861 and dealing 5,983 Shadow damage to enemies. After reaching its destination, the Divine Star returns to you, healing allies and damaging enemies in its path again. Healing reduced beyond 6 targets. Generates 6 Insanity.
+    divine_star                = {  82680, 122121, 1 }, -- Throw a Divine Star forward 31 yds, healing allies in its path for 8,608 and dealing 9,083 Shadow damage to enemies. After reaching its destination, the Divine Star returns to you, healing allies and damaging enemies in its path again. Healing reduced beyond 6 targets. Generates 6 Insanity.
     dominate_mind              = {  82710, 205364, 1 }, -- Controls a mind up to 1 level above yours for 30 sec while still controlling your own mind. Does not work versus Demonic, Mechanical, or Undead beings or players. This spell shares diminishing returns with other disorienting effects.
-    essence_devourer           = {  82674, 415479, 1 }, -- Attacks from your Shadowfiend siphon life from enemies, healing a nearby injured ally for 17,643. Attacks from your Mindbender siphon life from enemies, healing a nearby injured ally for 5,881.
+    essence_devourer           = {  82674, 415479, 1 }, -- Attacks from your Shadowfiend siphon life from enemies, healing a nearby injured ally for 22,136. Attacks from your Mindbender siphon life from enemies, healing a nearby injured ally for 7,378.
     focused_mending            = {  82719, 372354, 1 }, -- Prayer of Mending does 45% increased healing to the initial target.
     from_darkness_comes_light  = {  82707, 390615, 1 }, -- Each time Shadow Word: Pain deals damage, the healing of your next Flash Heal is increased by 3%, up to a maximum of 60%.
-    halo                       = {  82680, 120644, 1 }, -- Creates a ring of Shadow energy around you that quickly expands to a 34 yd radius, healing allies for 15,781 and dealing 15,406 Shadow damage to enemies. Healing reduced beyond 6 targets. Generates 10 Insanity.
-    holy_nova                  = {  82701, 132157, 1 }, -- An explosion of holy light around you deals up to 4,014 Holy damage to enemies and up to 3,087 healing to allies within 13 yds, reduced if there are more than 5 targets.
+    halo                       = {  82680, 120644, 1 }, -- Creates a ring of Shadow energy around you that quickly expands to a 34 yd radius, healing allies for 19,799 and dealing 23,389 Shadow damage to enemies. Healing reduced beyond 6 targets. Generates 10 Insanity.
+    holy_nova                  = {  82701, 132157, 1 }, -- An explosion of holy light around you deals up to 6,094 Holy damage to enemies and up to 3,874 healing to allies within 13 yds, reduced if there are more than 5 targets.
     improved_fade              = {  82686, 390670, 2 }, -- Reduces the cooldown of Fade by 5 sec.
     improved_flash_heal        = {  82714, 393870, 1 }, -- Increases healing done by Flash Heal by 15%.
     inspiration                = {  82696, 390676, 1 }, -- Reduces your target's physical damage taken by 5% for 15 sec after a critical heal with Flash Heal.
@@ -166,17 +166,17 @@ spec:RegisterTalents( {
     phantasm                   = {  82556, 108942, 1 }, -- Activating Fade removes all snare effects.
     phantom_reach              = {  82673, 459559, 1 }, -- Increases the range of most spells by 15%.
     power_infusion             = {  82694,  10060, 1 }, -- Infuses the target with power for 15 sec, increasing haste by 20%. Can only be cast on players.
-    power_word_life            = {  82676, 373481, 1 }, -- A word of holy power that heals the target for 101,450. Only usable if the target is below 35% health.
-    prayer_of_mending          = {  82718,  33076, 1 }, -- Places a ward on an ally that heals them for 7,474 the next time they take damage, and then jumps to another ally within 30 yds. Jumps up to 4 times and lasts 30 sec after each jump.
+    power_word_life            = {  82676, 373481, 1 }, -- A word of holy power that heals the target for 127,284. Only usable if the target is below 35% health.
+    prayer_of_mending          = {  82718,  33076, 1 }, -- Places a ward on an ally that heals them for 9,377 the next time they take damage, and then jumps to another ally within 30 yds. Jumps up to 4 times and lasts 30 sec after each jump.
     protective_light           = {  82707, 193063, 1 }, -- Casting Flash Heal on yourself reduces all damage you take by 10% for 10 sec.
     psychic_voice              = {  82695, 196704, 1 }, -- Reduces the cooldown of Psychic Scream by 15 sec.
     purify_disease             = {  82704, 213634, 1 }, -- Removes all Disease effects from a friendly target.
-    renew                      = {  82717,    139, 1 }, -- Fill the target with faith in the light, healing for 27,692 over 15 sec.
+    renew                      = {  82717,    139, 1 }, -- Fill the target with faith in the light, healing for 35,651 over 15 sec.
     rhapsody                   = {  82700, 390622, 1 }, -- Every 1 sec, the damage of your next Holy Nova is increased by 20% and its healing is increased by 20%. Stacks up to 20 times.
     sanguine_teachings         = {  82691, 373218, 1 }, -- Increases your Leech by 4%.
     sanlayn                    = {  82690, 199855, 1 }, --  Sanguine Teachings Sanguine Teachings grants an additional 2% Leech.  Vampiric Embrace Reduces the cooldown of Vampiric Embrace by 30 sec, increases its healing done by 25%.
     shackle_undead             = {  82693,   9484, 1 }, -- Shackles the target undead enemy for 50 sec, preventing all actions and movement. Damage will cancel the effect. Limit 1.
-    shadow_word_death          = {  82712,  32379, 1 }, -- A word of dark binding that inflicts 8,398 Shadow damage to your target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 5% of your maximum health. Damage increased by 250% to targets below 20% health. Generates 4 Insanity.
+    shadow_word_death          = {  82712,  32379, 1 }, -- A word of dark binding that inflicts 12,750 Shadow damage to your target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 5% of your maximum health. Damage increased by 250% to targets below 20% health. Generates 4 Insanity.
     shadowfiend                = {  82713,  34433, 1 }, -- Summons a shadowy fiend to attack the target for 15 sec. Generates 2 Insanity each time the Shadowfiend attacks.
     sheer_terror               = {  82708, 390919, 1 }, -- Increases the amount of damage required to break your Psychic Scream by 75%.
     spell_warding              = {  82720, 390667, 1 }, -- Reduces all magic damage taken by 3%.
@@ -199,14 +199,14 @@ spec:RegisterTalents( {
     dark_ascension             = {  82657, 391109, 1 }, -- Increases your non-periodic Shadow damage by 20% for 20 sec. Generates 30 Insanity.
     dark_evangelism            = {  82660, 391095, 2 }, -- Your Mind Flay, Mind Spike, and Void Torrent damage increase the damage of your periodic Shadow effects by 1%, stacking up to 5 times.
     deathspeaker               = {  82558, 392507, 1 }, -- Your Shadow Word: Pain damage has a chance to reset the cooldown of Shadow Word: Death, increase its damage by 25%, and deal damage as if striking a target below 20% health.
-    devouring_plague           = {  82665, 335467, 1 }, -- Afflicts the target with a disease that instantly causes 21,658 Shadow damage plus an additional 24,947 Shadow damage over 6 sec. Heals you for 30% of damage dealt. If this effect is reapplied, any remaining damage will be added to the new Devouring Plague.
+    devouring_plague           = {  82665, 335467, 1 }, -- Afflicts the target with a disease that instantly causes 32,881 Shadow damage plus an additional 39,025 Shadow damage over 6 sec. Heals you for 30% of damage dealt. If this effect is reapplied, any remaining damage will be added to the new Devouring Plague.
     dispersion                 = {  82663,  47585, 1 }, -- Disperse into pure shadow energy, reducing all damage taken by 75% for 6 sec and healing you for 25% of your maximum health over its duration, but you are unable to attack or cast spells. Increases movement speed by 50% and makes you immune to all movement impairing effects. Castable while stunned, feared, or silenced.
     distorted_reality          = {  82647, 409044, 1 }, -- Increases the damage of Devouring Plague by 20% and causes it to deal its damage over 12 sec, but increases its Insanity cost by 5.
-    idol_of_cthun              = {  82643, 377349, 1 }, -- Mind Flay, Mind Spike, and Void Torrent have a chance to spawn a Void Tendril that channels Mind Flay or Void Lasher that channels Mind Sear at your target.  Mind Flay Assaults the target's mind with Shadow energy, causing 31,551 Shadow damage over 15 sec and slowing their movement speed by 30%. Generates 10 Insanity over the duration. Mind Sear Corrosive shadow energy radiates from the target, dealing 16,827 Shadow damage over 15 sec to all enemies within 10 yards of the target. Damage reduced beyond 5 targets. Generates 10 Insanity over the duration.
-    idol_of_nzoth              = {  82552, 373280, 1 }, -- Your periodic Shadow Word: Pain and Vampiric Touch damage has a 30% chance to apply Echoing Void, max 4 targets. Each time Echoing Void is applied, it has a chance to collapse, consuming a stack every 1 sec to deal 1,175 Shadow damage to all nearby enemies. Damage reduced beyond 5 targets. If an enemy dies with Echoing Void, all stacks collapse immediately.
-    idol_of_yoggsaron          = {  82555, 373273, 1 }, -- After conjuring Shadowy Apparitions, gain a stack of Idol of Yogg-Saron. At 25 stacks, you summon a Thing from Beyond that casts Void Spike at nearby enemies for 20 sec.  Void Spike Hurls a bolt of dark magic, dealing 9,203 Shadow damage and 1,932 Shadow damage to all enemies within 10 yards of the target. Damage reduced beyond 5 targets.
+    idol_of_cthun              = {  82643, 377349, 1 }, -- Mind Flay, Mind Spike, and Void Torrent have a chance to spawn a Void Tendril that channels Mind Flay or Void Lasher that channels Mind Sear at your target.  Mind Flay Assaults the target's mind with Shadow energy, causing 47,900 Shadow damage over 15 sec and slowing their movement speed by 30%. Generates 10 Insanity over the duration. Mind Sear Corrosive shadow energy radiates from the target, dealing 25,546 Shadow damage over 15 sec to all enemies within 10 yards of the target. Damage reduced beyond 5 targets. Generates 10 Insanity over the duration.
+    idol_of_nzoth              = {  82552, 373280, 1 }, -- Your periodic Shadow Word: Pain and Vampiric Touch damage has a 30% chance to apply Echoing Void, max 4 targets. Each time Echoing Void is applied, it has a chance to collapse, consuming a stack every 1 sec to deal 1,784 Shadow damage to all nearby enemies. Damage reduced beyond 5 targets. If an enemy dies with Echoing Void, all stacks collapse immediately.
+    idol_of_yoggsaron          = {  82555, 373273, 1 }, -- After conjuring Shadowy Apparitions, gain a stack of Idol of Yogg-Saron. At 25 stacks, you summon a Thing from Beyond that casts Void Spike at nearby enemies for 20 sec.  Void Spike
     idol_of_yshaarj            = {  82553, 373310, 1 }, -- Summoning Mindbender causes you to gain a benefit based on your target's current state or increases its duration by 5 sec if no state matches. Healthy: You and your Mindbender deal 5% additional damage. Enraged: Devours the Enraged effect, increasing your Haste by 5%. Stunned: Generates 5 Insanity every 1 sec. Feared: You and your Mindbender deal 5% increased damage and do not break Fear effects.
-    inescapable_torment        = {  82644, 373427, 1 }, -- Mind Blast and Shadow Word: Death cause your Mindbender or Shadowfiend to teleport behind your target, slashing up to 5 nearby enemies for 5,885 Shadow damage and extending its duration by 0.7 sec.
+    inescapable_torment        = {  82644, 373427, 1 }, -- Mind Blast and Shadow Word: Death cause your Mindbender or Shadowfiend to teleport behind your target, slashing up to 5 nearby enemies for 8,935 Shadow damage and extending its duration by 0.7 sec.
     insidious_ire              = {  82560, 373212, 2 }, -- While you have Shadow Word: Pain, Devouring Plague, and Vampiric Touch active on the same target, your Mind Blast and Void Torrent deal 20% more damage.
     intangibility              = {  82659, 288733, 1 }, -- Dispersion heals you for an additional 25% of your maximum health over its duration and its cooldown is reduced by 30 sec.
     last_word                  = {  82652, 263716, 1 }, -- Reduces the cooldown of Silence by 15 sec.
@@ -217,91 +217,75 @@ spec:RegisterTalents( {
     mental_fortitude           = {  82659, 377065, 1 }, -- Healing from Vampiric Touch and Devouring Plague when you are at maximum health will shield you for the same amount. The shield cannot exceed 10% of your maximum health.
     mind_devourer              = {  82561, 373202, 2 }, -- Mind Blast has a 4% chance to make your next Devouring Plague cost no Insanity and deal 20% additional damage.
     mind_melt                  = {  93172, 391090, 1 }, -- Mind Spike increases the critical strike chance of Mind Blast by 30%, stacking up to 3 times. Lasts 10 sec.
-    mind_spike                 = {  82557,  73510, 1 }, -- Blasts the target for 14,255 Shadowfrost damage. Generates 4 Insanity.
+    mind_spike                 = {  82557,  73510, 1 }, -- Blasts the target for 21,642 Shadowfrost damage. Generates 4 Insanity.
     mindbender                 = {  82648, 200174, 1 }, -- Summons a Mindbender to attack the target for 15 sec. Generates 2 Insanity each time the Mindbender attacks.
     minds_eye                  = {  82647, 407470, 1 }, -- Reduces the Insanity cost of Devouring Plague by 5.
     misery                     = {  93171, 238558, 1 }, -- Vampiric Touch also applies Shadow Word: Pain to the target. Shadow Word: Pain lasts an additional 5 sec.
     phantasmal_pathogen        = {  82563, 407469, 2 }, -- Shadow Apparitions deal 0% increased damage to targets affected by your Devouring Plague.
     psychic_horror             = {  82652,  64044, 1 }, -- Terrifies the target in place, stunning them for 4 sec.
-    psychic_link               = {  82670, 199484, 1 }, -- Your direct damage spells inflict 30% of their damage on all other targets afflicted by your Vampiric Touch within 46 yards. Does not apply to damage from Shadowy Apparitions, Shadow Word: Pain, and Vampiric Touch.
+    psychic_link               = {  82670, 199484, 1 }, -- Your direct damage spells inflict 25% of their damage on all other targets afflicted by your Vampiric Touch within 46 yards. Does not apply to damage from Shadowy Apparitions, Shadow Word: Pain, and Vampiric Touch.
     screams_of_the_void        = {  82649, 375767, 2 }, -- Devouring Plague causes your Shadow Word: Pain and Vampiric Touch to deal damage 40% faster on all targets for 3 sec.
-    shadow_crash               = {  82669, 205385, 1 }, -- Aim a bolt of slow-moving Shadow energy at the destination, dealing 6,743 Shadow damage to all enemies within 8 yds. Generates 6 Insanity. This spell is cast at a selected location.
-    shadow_crash_2             = {  82669, 457042, 1 }, -- Hurl a bolt of slow-moving Shadow energy at your target, dealing 6,743 Shadow damage to all enemies within 8 yds. Generates 6 Insanity. This spell is cast at your target.
-    shadowy_apparitions        = {  82666, 341491, 1 }, -- Mind Blast, Devouring Plague, and Void Bolt conjure Shadowy Apparitions that float towards all targets afflicted by your Vampiric Touch for 3,033 Shadow damage. Critical strikes increase the damage by 100%.
+    shadow_crash               = {  82669, 205385, 1 }, -- Aim a bolt of slow-moving Shadow energy at the destination, dealing 10,237 Shadow damage to all enemies within 8 yds. Generates 6 Insanity. This spell is cast at a selected location.
+    shadow_crash_2             = {  82669, 457042, 1 }, -- Hurl a bolt of slow-moving Shadow energy at your target, dealing 10,237 Shadow damage to all enemies within 8 yds. Generates 6 Insanity. This spell is cast at your target.
+    shadowy_apparitions        = {  82666, 341491, 1 }, -- Mind Blast, Devouring Plague, and Void Bolt conjure Shadowy Apparitions that float towards all targets afflicted by your Vampiric Touch for 4,604 Shadow damage. Critical strikes increase the damage by 100%.
     shadowy_insight            = {  82662, 375888, 1 }, -- Shadow Word: Pain periodic damage has a chance to reset the remaining cooldown on Mind Blast and cause your next Mind Blast to be instant.
     silence                    = {  82651,  15487, 1 }, -- Silences the target, preventing them from casting spells for 4 sec. Against non-players, also interrupts spellcasting and prevents any spell in that school from being cast for 4 sec.
-    surge_of_insanity          = {  82668, 391399, 1 }, -- Every 2 casts of Devouring Plague transforms your next Mind Flay or Mind Spike into a more powerful spell. Can accumulate up to 4 charges.  Mind Flay: Insanity Assaults the target's mind with Shadow energy, causing 53,851 Shadow damage over 1.2 sec and slowing their movement speed by 70%. Generates 12 Insanity over the duration. Mind Spike: Insanity Blasts the target for 37,377 Shadowfrost damage. Generates 12 Insanity.
+    surge_of_insanity          = {  82668, 391399, 1 }, -- Every 2 casts of Devouring Plague transforms your next Mind Flay or Mind Spike into a more powerful spell. Can accumulate up to 4 charges.  Mind Flay: Insanity Assaults the target's mind with Shadow energy, causing 81,690 Shadow damage over 1.2 sec and slowing their movement speed by 70%. Generates 12 Insanity over the duration. Mind Spike: Insanity Blasts the target for 56,746 Shadowfrost damage. Generates 12 Insanity.
     thought_harvester          = {  82653, 406788, 1 }, -- Mind Blast gains an additional charge.
     tormented_spirits          = {  93170, 391284, 2 }, -- Your Shadow Word: Pain damage has a 5% chance to create Shadowy Apparitions that float towards all targets afflicted by your Vampiric Touch. Critical strikes increase the chance to 10%.
-    unfurling_darkness         = {  82661, 341273, 1 }, -- After casting Vampiric Touch on a target, your next Vampiric Touch within 8 sec is instant cast and deals 59,065 Shadow damage immediately. This effect cannot occur more than once every 15 sec.
-    void_eruption              = {  82657, 228260, 1 }, -- Releases an explosive blast of pure void energy, activating Voidform and causing 15,184 Shadow damage to all enemies within 10 yds of your target. During Voidform, this ability is replaced by Void Bolt. Casting Devouring Plague increases the duration of Voidform by 2.5 sec.
-    void_torrent               = {  82654, 263165, 1 }, -- Channel a torrent of void energy into the target, dealing 103,861 Shadow damage over 3 sec. Generates 24 Insanity over the duration.
+    unfurling_darkness         = {  82661, 341273, 1 }, -- After casting Vampiric Touch on a target, your next Vampiric Touch within 8 sec is instant cast and deals 89,672 Shadow damage immediately. This effect cannot occur more than once every 15 sec.
+    void_eruption              = {  82657, 228260, 1 }, -- Releases an explosive blast of pure void energy, activating Voidform and causing 23,052 Shadow damage to all enemies within 10 yds of your target. During Voidform, this ability is replaced by Void Bolt. Casting Devouring Plague increases the duration of Voidform by 2.5 sec.
+    void_torrent               = {  82654, 263165, 1 }, -- Channel a torrent of void energy into the target, dealing 161,545 Shadow damage over 3 sec. Generates 24 Insanity over the duration.
     voidtouched                = {  82646, 407430, 1 }, -- Increases your Devouring Plague damage by 6% and increases your maximum Insanity by 50.
     whispering_shadows         = {  82559, 406777, 1 }, -- Shadow Crash applies Vampiric Touch to up to 8 targets it damages.
 
-    -- Oracle
-    assured_safety             = {  94691, 440766, 1 }, -- Prayer of Mending casts apply a Power Word: Shield to your target at 100% effectiveness.
-    clairvoyance               = {  94687, 428940, 1 }, -- Casting Premonition of Solace invokes Clairvoyance, expanding your mind and opening up all possibilities of the future.  Premonition of Clairvoyance Grants Premonition of Insight, Piety, and Solace at 100% effectiveness.
-    desperate_measures         = {  94690, 458718, 1 }, -- Desperate Prayer lasts an additional 10 sec. Angelic Bulwark's absorption effect is increased by 15% of your maximum health.
-    divine_feathers            = {  94675, 440670, 1 }, -- Your Angelic Feathers increase movement speed by an additional 10%. When an ally walks through your Angelic Feather, you are also granted 100% of its effect.
-    divine_providence          = {  94673, 440742, 1 }, -- Premonition gains an additional charge.
-    fatebender                 = {  94700, 440743, 1 }, -- Increases the effects of Premonition by 40%.
-    foreseen_circumstances     = {  94689, 440738, 1 }, -- Guardian Spirit lasts an additional 2 sec.
-    miraculous_recovery        = {  94679, 440674, 1 }, -- Reduces the cooldown of Power Word: Life by 3 sec and allows it to be usable on targets below 50% health.
-    perfect_vision             = {  94700, 440661, 1 }, -- Reduces the cooldown of Premonition by 15 sec.
-    preemptive_care            = {  94674, 440671, 1 }, -- Increases the duration of Renew by 3 sec.
-    premonition                = {  94683, 428924, 1, "oracle" }, -- Gain access to a spell that gives you an advantage against your fate. Premonition rotates to the next spell when cast.  Premonition of Insight Reduces the cooldown of your next 3 spell casts by 7 sec.  Premonition of Piety Increases your healing done by 15% and causes 70% of overhealing on players to be redistributed to up to 4 nearby allies for 15 sec.  Premonition of Solace Your next single target healing spell grants your target a shield that absorbs 233,287 damage and reduces their damage taken by 15% for 15 sec.
-    preventive_measures        = {  94698, 440662, 1 }, -- Increases the healing done by Prayer of Mending by 25%. All damage dealt by Smite, Holy Fire and Holy Nova increased by 25%.
-    prophets_will              = {  94690, 433905, 1 }, -- Your Flash Heal, Heal, and Holy Word: Serenity are 30% more effective when cast on yourself.
-    save_the_day               = {  94675, 440669, 1 }, -- For 6 sec after casting Leap of Faith you may cast it a second time for free, ignoring its cooldown.
-    waste_no_time              = {  94679, 440681, 1 }, -- Premonition causes your next Heal or Prayer of Healing cast to be instant and cost 15% less mana.
-
-    -- Voidweaver
-    collapsing_void            = {  94694, 448403, 1 }, -- Each time you cast Devouring Plague, Entropic Rift is empowered, increasing its damage and size by 20%. After Entropic Rift ends it collapses, dealing 47,009 Shadow damage split amongst enemy targets within 15 yds.
+    -- Archon
     concentrated_infusion      = {  94676, 453844, 1 }, -- Your Power Infusion effect grants you an additional 10% haste.
-    dark_energy                = {  94693, 451018, 1 }, -- Void Torrent can be used while moving. While Entropic Rift is active, you move 20% faster.
-    darkening_horizon          = {  94695, 449912, 1 }, -- Void Blast increases the duration of Entropic Rift by 1.0 sec, up to a maximum of 3 sec.
-    darkening_horizon_2        = {  94668, 449912, 1 }, -- Void Blast increases the duration of Entropic Rift by 1.0 sec, up to a maximum of 3 sec.
-    depth_of_shadows           = { 100212, 451308, 1 }, -- Shadow Word: Death has a high chance to summon a Shadowfiend for 5 sec when damaging targets below 20% health.
-    devour_matter              = {  94668, 451840, 1 }, -- Shadow Word: Death consumes absorb shields from your target, dealing 25,194 extra damage to them and granting you 5 Insanity if a shield was present.
     divine_halo                = {  94702, 449806, 1 }, -- Halo now centers around you and returns to you after it reaches its maximum distance, healing allies and damaging enemies each time it passes through them.
-    embrace_the_shadow         = {  94696, 451569, 1 }, -- You absorb 3% of all magic damage taken. Absorbing Shadow damage heals you for 100% of the amount absorbed.
     empowered_surges           = {  94688, 453799, 1 }, -- Increases the damage done by Mind Flay: Insanity and Mind Spike: Insanity by 60%. Increases the healing done by Flash Heals affected by Surge of Light by 30%.
     energy_compression         = {  94678, 449874, 1 }, -- Halo damage and healing is increased by 30%.
     energy_cycle               = {  94685, 453828, 1 }, -- Consuming Surge of Insanity has a 100% chance to conjure Shadowy Apparitions.
-    entropic_rift              = {  94684, 447444, 1, "voidweaver" }, -- Void Torrent tears open an Entropic Rift that follows the enemy for 8 sec. Enemies caught in its path suffer 6,410 Shadow damage every 0.8 sec while within its reach.
     heightened_alteration      = {  94680, 453729, 1 }, -- Increases the duration of Dispersion by 2 sec.
     incessant_screams          = {  94686, 453918, 1 }, -- Psychic Scream creates an image of you at your location. After 4 sec, the image will let out a Psychic Scream.
-    inner_quietus              = {  94670, 448278, 1 }, -- Vampiric Touch and Shadow Word: Pain deal 20% additional damage.
     manifested_power           = {  94699, 453783, 1 }, -- Creating a Halo grants Surge of Insanity.
-    no_escape                  = {  94693, 451204, 1 }, -- Entropic Rift slows enemies by up to 70%, increased the closer they are to its center.
     perfected_form             = {  94677, 453917, 1 }, -- Your damage dealt is increased by 12% while Dark Ascension is active and by 20% while Voidform is active.
-    power_surge                = {  94697, 453109, 1 }, -- Casting Halo also causes you to create a Halo around you at 100% effectiveness every 5 sec for 10 sec. Additionally, the radius of Halo is increased by 10 yards.
+    power_surge                = {  94697, 453109, 1, "archon" }, -- Casting Halo also causes you to create a Halo around you at 100% effectiveness every 5 sec for 10 sec. Additionally, the radius of Halo is increased by 10 yards.
     resonant_energy            = {  94681, 453845, 1 }, -- Enemies damaged by your Halo take 2% increased damage from you for 8 sec, stacking up to 5 times.
     shock_pulse                = {  94686, 453852, 1 }, -- Halo damage reduces enemy movement speed by 5% for 5 sec, stacking up to 5 times.
-    sustained_potency          = {  94678, 454001, 1 }, -- Creating a Halo extends the duration of Dark Ascension or Voidform by 1 sec. If Dark Ascension and Voidform are not active, up to 6 seconds is stored and applied the next time you gain Dark Ascension or Voidform.
-    void_blast                 = {  94703, 450405, 1 }, -- Entropic Rift upgrades Mind Blast into Void Blast while it is active. Void Blast: Sends a blast of cosmic void energy at the enemy, causing 30,465 Shadow damage. Generates 6 Insanity.
+    sustained_potency          = {  94678, 454001, 1 }, -- Creating a Halo extends the duration of Voidform by 1 sec. If Voidform is not active, up to 6 seconds is stored. While out of combat or affected by a loss of control effect, the duration of Voidform is paused for up to 20 sec.
+    word_of_supremacy          = {  94680, 453726, 1 }, -- Power Word: Fortitude grants you an additional 5% stamina.
+
+    -- Voidweaver
+    collapsing_void            = {  94694, 448403, 1 }, -- Each time you cast Devouring Plague, Entropic Rift is empowered, increasing its damage and size by 20%. After Entropic Rift ends it collapses, dealing 71,369 Shadow damage split amongst enemy targets within 15 yds.
+    dark_energy                = {  94693, 451018, 1 }, -- Void Torrent can be used while moving. While Entropic Rift is active, you move 20% faster.
+    darkening_horizon          = {  94668, 449912, 1 }, -- Void Blast increases the duration of Entropic Rift by 1.0 sec, up to a maximum of 3 sec.
+    depth_of_shadows           = { 100212, 451308, 1 }, -- Shadow Word: Death has a high chance to summon a Shadowfiend for 5 sec when damaging targets below 20% health.
+    devour_matter              = {  94668, 451840, 1 }, -- Shadow Word: Death consumes absorb shields from your target, dealing 38,250 extra damage to them and granting you 5 Insanity if a shield was present.
+    embrace_the_shadow         = {  94696, 451569, 1 }, -- You absorb 3% of all magic damage taken. Absorbing Shadow damage heals you for 100% of the amount absorbed.
+    entropic_rift              = {  94684, 447444, 1, "voidweaver" }, -- Void Torrent tears open an Entropic Rift that follows the enemy for 8 sec. Enemies caught in its path suffer 9,732 Shadow damage every 0.8 sec while within its reach.
+    inner_quietus              = {  94670, 448278, 1 }, -- Vampiric Touch and Shadow Word: Pain deal 20% additional damage.
+    no_escape                  = {  94693, 451204, 1 }, -- Entropic Rift slows enemies by up to 70%, increased the closer they are to its center.
+    void_blast                 = {  94703, 450405, 1 }, -- Entropic Rift upgrades Mind Blast into Void Blast while it is active. Void Blast: Sends a blast of cosmic void energy at the enemy, causing 55,503 Shadow damage. Generates 6 Insanity.
     void_empowerment           = {  94695, 450138, 1 }, -- Summoning an Entropic Rift grants you Mind Devourer.
     void_infusion              = {  94669, 450612, 1 }, -- Void Blast generates 100% additional Insanity.
     void_leech                 = {  94696, 451311, 1 }, -- Every 2 sec siphon an amount equal to 3% of your health from an ally within 40 yds if they are higher health than you.
     voidheart                  = {  94692, 449880, 1 }, -- While Entropic Rift is active, your Shadow damage is increased by 10%.
-    voidwraith                 = { 100212, 451234, 1 }, -- Transform your Shadowfiend or Mindbender into a Voidwraith. Voidwraith Summon a Voidwraith for 15 sec that casts Void Flay from afar. Void Flay deals bonus damage to high health enemies, up to a maximum of 50% if they are full health. Generates 2 Insanity each time the Voidwraith attacks.
-    word_of_supremacy          = {  94680, 453726, 1 }, -- Power Word: Fortitude grants you an additional 5% stamina.
+    voidwraith                 = { 100212, 451234, 1 }, -- Transform your Shadowfiend or Mindbender into a Voidwraith. Voidwraith
 } )
 
 
 -- PvP Talents
 spec:RegisterPvpTalents( {
-    absolute_faith       = 5481, -- (408853) Leap of Faith also pulls the spirit of the 3 furthest allies within 40 yards and shields you and the affected allies for 73,514.
-    catharsis            = 5486, -- (391297) 15% of all damage you take is stored. The stored amount cannot exceed 12% of your maximum health. The initial damage of your next Shadow Word: Pain deals this stored damage to your target.
-    driven_to_madness    =  106, -- (199259) While Voidform or Dark Ascension is not active, being attacked will reduce the cooldown of Void Eruption and Dark Ascension by 3 sec.
-    improved_mass_dispel = 5636, -- (426438) Reduces the cooldown of Mass Dispel by 60 sec.
-    mind_trauma          =  113, -- (199445) Siphon haste from enemies, stealing 2% haste per stack of Mind Trauma, stacking up to 9 times. Mind Spike and fully channeled Mind Flays grant 1 stack of Mind Trauma and fully channeled Void Torrents grant 3 stacks of Mind Trauma. Lasts 15 sec. You can only gain 3 stacks of Mind Trauma from a single enemy.
-    mindgames            = 5638, -- (375901) Assault an enemy's mind, dealing 29,405 Shadow damage and briefly reversing their perception of reality. For 7 sec, the next 73,513 damage they deal will heal their target, and the next 73,513 healing they deal will damage their target. Generates 10 Insanity.
-    phase_shift          = 5568, -- (408557) Step into the shadows when you cast Fade, avoiding all attacks and spells for 1 sec. Interrupt effects are not affected by Phase Shift.
-    psyfiend             =  763, -- (211522) Summons a Psyfiend with 19,522 health for 12 sec beside you to attack the target at range with Psyflay.  Psyflay Deals up to 1% of the target's total health in Shadow damage every 0.8 sec. Also slows their movement speed by 50% and reduces healing received by 50%.
+    absolute_faith       = 5481, -- (408853)
+    catharsis            = 5486, -- (391297)
+    driven_to_madness    =  106, -- (199259)
+    improved_mass_dispel = 5636, -- (426438)
+    mind_trauma          =  113, -- (199445)
+    mindgames            = 5638, -- (375901) Assault an enemy's mind, dealing 44,642 Shadow damage and briefly reversing their perception of reality. For 7 sec, the next 92,237 damage they deal will heal their target, and the next 92,237 healing they deal will damage their target. Generates 10 Insanity.
+    phase_shift          = 5568, -- (408557)
+    psyfiend             =  763, -- (211522) Summons a Psyfiend with 27,350 health for 12 sec beside you to attack the target at range with Psyflay.  Psyflay Deals up to 1% of the target's total health in Shadow damage every 0.8 sec. Also slows their movement speed by 50% and reduces healing received by 50%.
     thoughtsteal         = 5381, -- (316262) Peer into the mind of the enemy, attempting to steal a known spell. If stolen, the victim cannot cast that spell for 20 sec. Can only be used on Humanoids with mana. If you're unable to find a spell to steal, the cooldown of Thoughtsteal is reset.
-    void_volley          = 5447, -- (357711) After casting Void Eruption or Dark Ascension, send a slow-moving bolt of Shadow energy at a random location every 0.5 sec for 3 sec, dealing 7,478 Shadow damage to all targets within 8 yds, and causing them to flee in Horror for 2 sec.
+    void_volley          = 5447, -- (357711)
 } )
 
 
@@ -309,22 +293,34 @@ spec:RegisterTotem( "mindbender", 136214 )
 spec:RegisterTotem( "shadowfiend", 136199 )
 spec:RegisterTotem( "voidwraith", 615099 )
 
-local unfurling_darkness_triggered = 0
 
-spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
-    if sourceGUID == GUID then
-        if subtype == "SPELL_AURA_REMOVED" and spellID == 341207 then
-            Hekili:ForceUpdate( subtype )
+local entropic_rift_expires = 0
+local er_extensions = 0
 
-        elseif subtype == "SPELL_AURA_APPLIED" then
-            if spellID == 341273 then
-                unfurling_darkness_triggered = GetTime()
-            elseif spellID == 341207 then
-                Hekili:ForceUpdate( subtype )
-            end
-        end
+spec:RegisterHook( "COMBAT_LOG_EVENT_UNFILTERED", function( _, subtype, _, sourceGUID, _, _, _, _, _, _, _, spellID )
+    if sourceGUID ~= GUID then return end
+
+    if subtype == "SPELL_AURA_REMOVED" and spellID == 341207 then
+        Hekili:ForceUpdate( subtype )
+
+    elseif subtype == "SPELL_AURA_APPLIED" and spellID == 341207 then
+        Hekili:ForceUpdate( subtype )
+
+    elseif ( subtype == "SPELL_AURA_APPLIED" or subtype == "SPELL_AURA_REFRESH" ) and spellID == 450193 then
+        entropic_rift_expires = GetTime() + 8 -- Assuming it will re-refresh from VT ticks and be caught by SPELL_AURA_REFRESH.
+        er_extensions = 0
+        return
+
+    elseif state.talent.darkening_horizon.enabled and subtype == "SPELL_CAST_SUCCESS" and er_extensions < 3 and spellID == 450405 and entropic_rift_expires > GetTime() then
+        entropic_rift_expires = entropic_rift_expires + 1
+        er_extensions = er_extensions + 1
     end
+
 end, false )
+
+spec:RegisterStateExpr( "rift_extensions", function()
+    return er_extensions
+end )
 
 
 local ExpireVoidform = setfenv( function()
@@ -390,9 +386,7 @@ spec:RegisterHook( "reset_precast", function ()
         applyBuff( "shadowform" )
     end
 
-    if unfurling_darkness_triggered > 0 and now - unfurling_darkness_triggered < 15 then
-        applyBuff( "unfurling_darkness_icd", now - unfurling_darkness_triggered )
-    end
+    if debuff.unfurling_darkness_cd.up then applyBuff( "unfurling_darkness_cd", debuff.unfurling_darkness_cd.remains ) end
 
     if pet.mindbender.active then
         applyBuff( "mindbender", pet.mindbender.remains )
@@ -430,11 +424,19 @@ spec:RegisterHook( "reset_precast", function ()
         reduceCooldown( "ascended_blast", latency * 2 )
     end
 
-    local er_trigger = query_time - ( talent.void_eruption.enabled and action.void_eruption.lastCast or action.void_torrent.lastCast )
-
-    if talent.entropic_rift.enabled and query_time - action.void_torrent.lastCast < 8 then
-        applyBuff( "entropic_rift", 8 - ( query_time - action.void_torrent.lastCast ) )
+    if buff.voidheart.up then
+        applyBuff( "entropic_rift", buff.voidheart.remains )
+    elseif entropic_rift_expires > query_time then
+        applyBuff( "entropic_rift", entropic_rift_expires - query_time )
     end
+
+    -- Sanity check that Void Blast is enabled.
+    if buff.entropic_rift.up and talent.void_blast.enabled and not IsSpellKnownOrOverridesKnown( 450983 ) then
+        -- Void Blast isn't known for some reason; let's remove ER so MB can be queued.
+        removeBuff( "entropic_rift" )
+    end
+
+    rift_extensions = nil
 
     if talent.power_surge.enabled and query_time - action.halo.lastCast < 10 then
         applyBuff( "power_surge", 10 - ( query_time - action.halo.lastCast ) )
@@ -574,6 +576,11 @@ spec:RegisterAuras( {
         id = 373281,
         duration = 20,
         max_stack = 20
+    },
+    voidheart = {
+        id = 449887,
+        duration = 8,
+        max_stack = 1
     },
     entropic_rift = {
         duration = 8,
@@ -882,6 +889,11 @@ spec:RegisterAuras( {
         type = "Magic",
         max_stack = 1
     },
+    surge_of_insanity = {
+        id = 423846,
+        duration = 3600,
+        max_stack = 1
+    },
     -- Taking Shadow damage every $t1 sec.
     -- https://wowhead.com/beta/spell=363656
     torment_mind = {
@@ -908,10 +920,11 @@ spec:RegisterAuras( {
         duration = 15,
         max_stack = 1,
     },
-    unfurling_darkness_icd = {
+    unfurling_darkness_cd = {
         id = 341291,
         duration = 15,
-        max_stack = 1
+        max_stack = 1,
+        copy = "unfurling_darkness_icd"
     },
     -- Suffering $w1 damage every $t1 sec. When damaged, the attacker is healed for $325118m1.
     -- https://wowhead.com/beta/spell=325203
@@ -1061,9 +1074,6 @@ spec:RegisterAuras( {
         max_stack = 1
     },
 } )
-
-
-
 
 
 -- Abilities
@@ -1483,6 +1493,10 @@ spec:RegisterAbilities( {
             if set_bonus.tier29_2pc > 0 then
                 addStack( "gathering_shadows" )
             end
+
+            if talent.void_blast.enabled then
+                spendCharges( "void_blast", 1 )
+            end
         end,
 
         bind = "void_blast"
@@ -1520,6 +1534,12 @@ spec:RegisterAbilities( {
             removeBuff( "mind_melt" )
             removeBuff( "shadowy_insight" )
 
+            if talent.darkening_horizon.enabled and rift_extensions < 3 then
+                buff.entropic_rift.expires = buff.entropic_rift.expires + 1
+                if buff.voidheart.up then buff.voidheart.expires = buff.voidheart.expires + 1 end
+                rift_extensions = rift_extensions + 1
+            end
+
             if talent.inescapable_torment.enabled then
                 if buff.mindbender.up then buff.mindbender.expires = buff.mindbender.expires + 0.7
                 elseif buff.shadowfiend.up then buff.shadowfiend.expires = buff.shadowfiend.expires + 0.7 end
@@ -1530,6 +1550,8 @@ spec:RegisterAbilities( {
             if set_bonus.tier29_2pc > 0 then
                 addStack( "gathering_shadows" )
             end
+
+            spendCharges( "mind_blast", 1 )
         end,
 
         copy = 450405,
@@ -2020,15 +2042,23 @@ spec:RegisterAbilities( {
         talent = function()
             return talent.shadow_crash_2.enabled and "shadow_crash_2" or "shadow_crash"
         end,
-        startsCombat = false,
+        startsCombat = function() return talent.shadow_crash_2.enabled end,
 
         velocity = 2,
+
+        cycle = function()
+            if talent.whispering_shadows.enabled then return "vampiric_touch" end
+        end,
 
         impact = function ()
             removeBuff( "deaths_torment" )
             if talent.whispering_shadows.enabled then
                 applyDebuff( "target", "vampiric_touch" )
                 active_dot.vampiric_touch = min( active_enemies, active_dot.vampiric_touch + 7 )
+                if talent.misery.enabled then
+                    applyDebuff( "target", "shadow_word_pain" )
+                    active_dot.shadow_word_pain = min( active_enemies, active_dot.shadow_word_pain + 7 )
+                end
             end
         end,
 
@@ -2201,7 +2231,11 @@ spec:RegisterAbilities( {
         spendType = "insanity",
 
         startsCombat = true,
-        cycle = function () return talent.misery.enabled and "shadow_word_pain" or "vampiric_touch" end,
+        cycle = function ()
+            if talent.misery.enabled and debuff.shadow_word_pain.remains < debuff.vampiric_touch.remains then return "shadow_word_pain" end
+            return "vampiric_touch"
+        end,
+        max_targets = 1,
 
         handler = function ()
             applyDebuff( "target", "vampiric_touch" )
@@ -2211,11 +2245,11 @@ spec:RegisterAbilities( {
             end
 
             if talent.unfurling_darkness.enabled then
-                if buff.unfurling_darkness.up then
-                    removeBuff( "unfurling_darkness" )
-                elseif debuff.unfurling_darkness_icd.down then
+                if buff.unfurling_darkness.up then removeBuff( "unfurling_darkness" ) end
+                if buff.unfurling_darkness_cd.down then
                     applyBuff( "unfurling_darkness" )
-                    applyDebuff( "player", "unfurling_darkness_icd" )
+                    applyDebuff( "player", "unfurling_darkness_cd" )
+                    applyBuff( "unfurling_darkness_cd" )
                 end
             end
         end,
@@ -2244,7 +2278,6 @@ spec:RegisterAbilities( {
 
             if debuff.shadow_word_pain.up then debuff.shadow_word_pain.expires = debuff.shadow_word_pain.expires + 3 end
             if debuff.vampiric_touch.up then debuff.vampiric_touch.expires = debuff.vampiric_touch.expires + 3 end
-            if talent.legacy_of_the_void.enabled and debuff.devouring_plague.up then debuff.devouring_plague.expires = query_time + debuff.devouring_plague.duration end
 
             removeBuff( "anunds_last_breath" )
         end,
@@ -2343,17 +2376,15 @@ spec:RegisterAbilities( {
 
         start = function ()
             applyDebuff( "target", "void_torrent" )
-            applyDebuff( "target", "devouring_plague" )
-            if debuff.vampiric_touch.up then applyDebuff( "target", "vampiric_touch" ) end -- This should refresh/pandemic properly.
-            if debuff.shadow_word_pain.up then applyDebuff( "target", "shadow_word_pain" ) end -- This should refresh/pandemic properly.
             if talent.dark_evangelism.enabled then addStack( "dark_evangelism" ) end
-            if talent.entropic_rift.enabled then applyBuff( "entropic_rift" ) end
+            if talent.entropic_rift.enabled then
+                if talent.voidheart.enabled then applyBuff( "voidheart", 11 ) end
+                applyBuff( "entropic_rift", class.auras.entropic_rift.duration + ( 3 * talent.voidheart.rank ) )
+            end
             if talent.idol_of_cthun.enabled then applyDebuff( "target", "void_tendril_mind_flay" ) end
         end,
 
         tick = function ()
-            if debuff.vampiric_touch.up then applyDebuff( "target", "vampiric_touch" ) end -- This should refresh/pandemic properly.
-            if debuff.shadow_word_pain.up then applyDebuff( "target", "shadow_word_pain" ) end -- This should refresh/pandemic properly.
             if talent.dark_evangelism.enabled then addStack( "dark_evangelism" ) end
         end,
     },
@@ -2406,4 +2437,4 @@ spec:RegisterSetting( "sw_death_protection", 50, {
 } )
 
 
-spec:RegisterPack( "Shadow", 20241006.2, [[Hekili:T3ZAZTnsY9Br1vHMCLffjLKxzhrE1Ew7M1UYUNRt(o)HurKqGGIOeiacEizLsf)TNU7zgG5jiifLxFPUQs2ZICqp90VFnGxp86pF9vZ9kcU(3hny0Pdhm4n9h82tpFWBV(QIhtdU(Qup)78Uf(hXERG)7vl9MN8a(XpgL4nhF88KYmF4RwwuKM)UJp(2WILL303pz1X5HRkJ8kctI9Z8wuG)T)XxF1nLHrfFi(6BSV3NF9vELfltYGTlC17bihoFEaB5b5(xFfU8Jgo4ObV5DRN9Pp8VVE2LjXVQy9S)XNxp7by7xpJHNRN9(mVC4pdJxpBru4TlHf19lldZtdYcJVvSU8ER)46psGDWBpAW5VE9mb4rmy9SYuervwe(L)wY8WfHbZxpRiz9SGyVBIcaK5thxJiV)YC8BV92iCzjlwOaKZCUdNF0OrWx(zanVlOW23pCi89)LsaIZ(uYdbzRN9LKS5WN9ljzfHfLZvw9aC1)0CahU6lV7Yape3cIlYEeimzjRwpd4nIDbiOEXjflryk9X1G7hpA0BrK7HaV7GtNx2TikM)Gx66zrj3g6RS0ZXLUeimFXdrsGSegF9vrH5f5O8ZIWOOGm4F97K0iJko)6)cif4JIoxF19ERsdZc9NwKu6V86R8F0pkykBBZXh7k)SWcGJ6HYwlw0VmErzweWGNo3l7U4G88(LPmPNSWugqFVxokXWbnGHiSzms)K48Yvac)3fWbyQCabIgPzbl4Ipf4XsC(zmC6JIagcc(ltabH5LzKoaqvHd09bxxas8Ah16dW8KI(ZdUhuQq8pnY72YG(zbR8cJbjPjmGKe3Fvy88P5PH3f03hoktlcrm(PNwp7aeLIaMR8Ae71v5fWXTGOAc6RVxu0u2FmfzlmMZuMgFWQuu6ky(uoJcE2tCWOYjTPPpaYHtNJYyYhmgzQ)YaVOIL9t9bYZfRNnAadP7UEgX6Ohdup9UlidyASVmpOy6njXL59lcdYoz40rPahR36zDaQRn6vrO)DWFArubW(t3nSNOOHGmGVxk(SG0y2k8Z4GIWMu4ecweIN3NZRTIbN5K7t0G7tcNVaaE153pjjcqT4(O48uVC)G4Cugq890trmBgLGiD1hmDYdIcVXbryPxuIMMYvE3hG2aykhJgaIHHGrhV5ZH)LxwaIFRi1H8eaPKpoaJeeT4hEs6Lo))OJnFRfep3bGQf8TZaEBtp3IiVhTzKjmgovzLPftdxaceGiw(KXJu(8vRcMhIU0UcnkT0dn0P8K3gLCJxe(HOk4aenQ4sH3dsxtZHTug3W15YWixI1hDYPX0(75bgEbFyzi6FAvY9e3YdzFKTQJsZctaM2JcRl4AdIf84ha696zGhbIthWCNIkU5bGPY55kS8mVW5tdUhvmWNUpU2jSL3HSnzOmFAQpDk1Tj2KEzdEaCzNPjce3Zj3V42qNWJxWxd8lli1QHBHPX9p6yxyFyBm4LsYQnrxTY328H4tEHXBZzq4h9ZNmC9mHOHUbZD7e4s47L6qKuwOCoa7zEjbtV3dWg4KKBlMNKuIslh8dB14)kcSDRAtTVASrGQ2FgSXocpsl8kJa4G)badUr0vEFD69aHXsiiBENhidwzOgMdaDAAsEEiUElriSzGBthgJPboytNhcK9jJHt25v(8vp4qeslYcaXboiDJz6kdBgZ6kcCBQ5(UE2HRNbi1pqrWWdnt2Smy)BQiZJovbM9qvkitzloVokIE0)hEAfysFoxRk8UQVq74Pki)5)6L)vq29VfGOmZ59IWVcEYJHLfMH71nbl9UpecoqO1vgd(F8Vd)UfisNltmHJF(uiWclrW0kQO555OgjT9il3NseohUvgEgJOy7RVaZIZ6d7Nugxqp)UGvYcQvp8sicnKD6ZC12owTful4RuErsuDfiBl0Twr7BJeSSKL25zNLiLn9ex6fHp1uV00iiTzMjrJ46AitW646McPd5fdMCT7ZZvSenfGhHncdCcKOYtdy6pglZHsKzBVnuxcQN1ilF7nN2vkRbmFIPby8NO1PQCjVayO36ph5Le7)ezXw1NPsIDtzJudaTVu28gce5TbsKktprk(3NM)O)squfsc)oLVx9WjGGYzJz4OljFAxnJwWg8Nc8MgmXaBJdlq1PSdR5nIGFBq)ITa9eaLflsHZ8u4ZN6pp3MRSAZsCT9G4GvHbSeVgT9P(dbRyZwV4zZkJD(O4zNPqLMbjjS6gptvksTNf72crjR2G(LsSCePIztTIyPgyi(XUuFGOfCPav5Vldrm)GPy4DsX(mWvCeTaMqanwHP16c0wyYdQtjOphokAb4mdQq(CRN7Elbkk7IY7Ob4BI8Yvq3bv5YlaHxMVxCGqVwtQqp79nK8jO)n6mlQ6YHPXuLpxYIHTmf4vJQbOWmx0Zrk6v58Bf57kx6UMcBG7ZDdrB2t6WWbQYsvaNd3sJoRvh5ZRWPBaPgh1SJOFBGjmwN8Pv6xrounfJWMmPjL)vdbkSn1CgOXsPFWDF1ycmDTMddVQLMbvXd8wKBadawdDfygdm81yg5LyjBqesTAYBiPfj)xyJfssHZvw4IckUGEA5M8RWgaPvBK2mMKskM2mL7Sr15XLu5uRyPxHO4urHynkX)okGkSpsO5LN611fVC4ibRbEEgzj6XQe7bxvPPed4Ns(zB(nSQuVPso0qkc2fduKLqwG11ifOJnHn7rti2vBQ7h18g1JhNQjV0wPgrInkR9OJwS4XO)pwvgz4)x4XPIFCtaXmcwSi0pmiUQflgqKtXWVpgLlz2jWOKAWorAc7)1woZVFzG)DWg9ZhF5pr9jdBfgkmfIldW1B8YP(5fteTCnRb2RIp9PSGEcJxuAwbF7Xt3vyvTdpN8Pkm)QaH1GC1IoKZ1KmDObg0W0jIgXqyYnrjjZJkZXiQ98lQIAVje5KbnhXwJh)gG751SSfHzbeQzt585VtyPYeB1nbz5bzutKAms7DEVotAVWJ00fLzpAliW97E5bjXc5baUdq)K2Isun8CXgP3tOhJ9R678h4RPs)Kl5d6hzSoNcwufI1ghi76jg6c2I9uGQwAA1V5DhybjVeBp1VHXCgephX1WCrTqq7lW(I29t4M91qvSCyqycWt8ys56zlP(Gbu1WBJdbtsEOfjMVregHXOtf8exKKiSUj8ky2jrg5fqWBdusSTRztevt4L9nkkVNkNY8QQtRreJnScM)cTnrWrSLoP4rAtJrv3(gQma78xHfu1AOSf67VePK5uiId0HyBkwHJIGmrRiiNI(3kC3zrfWSpK5qLL1Z(zoeHfgphhzaSITvN5KfmaUE2FjIIUrafSZ)S(ClhXHfU4UlyTzrNNHesMx8DBpJNnQdterJ0ygHVmh5xqTLArnv9eRjp2QCEkyZqeLUJZwjdcYqS9EfyHj8EmiZwmExkwdg5oUiwSCyNwzHyNVmPmAUR(yIMg5tv0CVvE3IAdSXOHmVEtqe(m)4z)BY8pL24og)AwWDubM2P(NXzp2QeoY)zrZxX8em0NzBDAQ4Cqy1N4OnloQVmo)bgouiltmDgz50wuOuz7FDPmWpur6F6QGijGYkvmtPvufE5jtYyAC8tYl0KN(j061dKDWe2awvxyO)me)DjHMy6djX4)TKc3EbkcHgmFia8fNbj29F9Rb3fgf(FJDLvEw8aZIyAHGAbktvMZ(uCWdNJXRiqA2uoqZOhnilYdQx)nv(khsytdIYdOMLw1zZMJw1vKByi1IILBPAcmZFDeL4XvAMUTi1RL2pCuTzXZwBF0DEHKbsUVnzpJOdpHakljWOerR1nYYJEARnMN4Dc770YYP4tzHJ2qaO8eW1hJG6kX0Xwvy2t2eKC898KbSuPpxXyPesK2IK31ktcnMBHKh42mHgTy4DsZabuWJnvICMHKPR8kO8VRPPkFrTj2gRWKRzRbnaq(FiHiCJdRMStQ(LIbK9sAtb5xAxBkZPAlXBS4qYwzRMDp94MToEFs5kPwUnBM21On8OixrXqEtzg(hV7HqSV)VZwEw5b(aEBj4SSaw4z00NwtaEWlSq(GUXhLKLA6S0XzLfT)nwLL7SHimVGpEInovHTGV6is2fLGrw9JTS73dRgLmPP5ToawfgR6cpuckmRbwJ7DZrFQ9SkrgRULDmDRqXNjzlQb52nk63WW9kpm0g4KSNqtN2wnORPC8(KvPrq29fiAmpHp4Jjq8g(48TxbmUNMs0lxyblaJ0SKIamuvVBrue(h3tP3Dtseo8Kiadqxt2Yzr16rs0geYerEb0hS8OSXzz4BSeZhclvHNb9hAZxngzfdtPsXJwarE7JQJ2oPSuiYcdp1GVO(GH1ab5cZlL8iFdvfFKmJH377vQUlyEXSW7889def)flWY8agLJvfjWfk6))2spiFXIauudK0dxvUIkomqWBm5iJXFUr6Qu6b6piVAATqYurTw338ESAfNuvzwtXbcxFJgF(sd5z2qSYNLMMYquo)HnA)RPPYxeptteddH4QLWBdwT1mvd)APOBpQyDnE2vbH0u)m7aY6LeqJaHZLuKe1J4jo871jHq0S92OlZdVjTy50KfwhySUvHcQNASsf8nUhfYrpj9v1gC1RWBCykg)(xWKJ4bsJ4fRAu87nfpzRupm89uSFUyix41JzDDF2epmxAawbxBIBLzvFIg6QzB)lVU)ZUxxB(AKkNzotLQmNeo(qnzI0gxX0gXvxhMoSaw1tRlrAgZlmRDWbFfsDmGFHuWRHf3QhZz9cPYo8BcSKje2MrLVfkYoeF6Qk2nCFi2yvCyNYfcDhRx2AIqsekmpBwZqkw6H5CtNfa3JkjDCSWjRNLLKqtCLZj2VLr38hsem)cM1jDYQRjHpRtWldY4lDLur(zxDZ5jb501pft7znR7pSYy0nSpc3hccZWcF8lV7dIaafi0)X7VKsFEOEUKBWR9VD1hyY8)2V8b6ggs8OFwmkTaQvY0l6(tz(ltI71VPI9inyG(g9X2Ym32NgsCPkBlBvr5(gk5rQA0BDdMdAesQE9RMAyQfA5oRnVE0dB8oLn0vxgnJJu1HzAa3ivMCjgrbrl((QhDf0CejxUGv6iUfmew66CdhK3Qkhow(sNcgAoLoxUsRD7Ip2EGMNCMsegafojdsGcWjViCXMIdBZvzunEqjN71T2QnroFcfZSsPT2yu59CwNfJeh59iXGvZSAa5Re()gG9jbn70hncdKiaXdZ8lrYikhyXdhYcLkynD7Pz07VWIRsqRXB6brSXhog3YW4cQ8OS68WeHsI5cFEc7F0kkJkcpIhxjjS0y2PTklGMh9PdAr87BioemK3(N5YnGuO8iLTo2GBX7QDCaEx0XydXc6Lxqb6)pW61lhRbRJ)VVyzPOXSQDRLI2TmMiUIM8I8lQpf)m)Cb8f4GHxv)Wi8UsIT1XvQQTFWY20CJTfP)yB(TulfFTyj5fIdm(5Kpaxe1rVK9H51ISPWsGyu8XPpl(w2TGFFCJ)B1OxYg9VopRjVStJZCPT(SmwkgpzBukDnqrGUPjWd3HM6YtTkvR65WbBSjgBbq1eP(0EzeohjKR0FBEKZfe9U3lmIX4Xi9jrQ9uQ4MsaDSNzT9OaUuArOrIeF20gVhsY9zMIxdLzsTmbUDiUtj85H8y3t0cvuLNth)yq7s(5vwiHVk0wvTHS6z9v1KoXLCLfyJTjTkcYcPrUWYekWhe9BcYWQzoLghEWqk(o2bspDAYIftHquUw(w6yDX1cfyenYPNpOwy1YtkI6MUIu2gYGknM0hxrUgZN(qWn2snWYSik2yPhgO0qakvb7JB7aBHTIPbGFdpKRwSj1JPk3eDvOA2FiZrFfB5Zi19SHGQvRWM1P11Yt9MbnedPsonoJeY642UwBQ7v5xKPjMSMgJSXPryVo9YCs6gJnV6I6Y1B6x3I6Q0yeuYEBEyKzVTheIXOsfC6wXMkCq5eYHMMdG6x7udXwwMfdMdatx0RQOWvPu05ueoVIPA)kCqZ)Fkz3C6C6fHHxzrYkwNIatBXyEOR)4)zigri(2B69jXWMrF9RmsS9vSmdm)cbNhwq3HFTxfep1oeTuGinq3qjKQ3J1F0Ybx56YSDNFhyRzueAiR7Wm0PhN9cUdwPgO812reg(cIInkMvpccAq2CkXAjeRgemBYTYdiwlfB3J0ah7GQbjnOBFazAPiMY8NOdyBZMIoCFtd0yriB2OZ6HZPd3ZFrnr04E8SX9HdAquw40WM0SEmQga2Hw4lgGdK9JRb4aB(4naSdDq9gdAi6zVVHTh81jTyaAZEgAa2t(gi95AtE(IFVSUx5Bstk(7wubFdbPEn31fTDusEdW7WcIrvJ1LbDvv52UbpFf(3(cPWp6BqGcFd2IxkDtxa(zWqTgGx17QIxTDr55WZ1EH06kU8TdfDyX)Ldd9NVL5l8J2XqPRjNgQz5c0Pl34aMRQAYTfHr1R6ZFyqCV62XXEShcq2bKFgkMBmiZDKo7W09(hI7joNvTkrDf3ovlhk)b7UxlRih)15Y2HB7Fl7nc39GiFtymVXO2qyTxYvTeQYV)R0T)z5vJLmh6deZbb2BR7mj9w3g(A61iP)1)(OZohV0fjlcJQMF)8(v(bpC8X2ElnT(J2wjZbbw0WxhUy8bSAsw9zybbT(yI6l9ASyLJvENl9AUi14bVojDm9wgQnWq5DSufmgUDWG1DV6NE0w94QVdL2XZHzJvAnGuF)jT(J)P)KqgqDDIIJY2qlDlOjwnRJHiZ289jYKXJoRtUZx1pxm(8oDpW27iONEY9tnzypx0n5wMIyu3dCgbZtpDqJn(SxNQhwzbCDSNEY80EXOZAeVph2tSC1WISCKBGonEi9tta)mJuE27Hq5psvOrPXWOucSJVMUjIw4sxm8m3qs(1nNkG62Cf9VymFgB(Ht6yZM9tp56kOvM2XQT4Ep9KfBPDSyjStJ331lgFkWCT)YauJlOksnzOv2(4Zm)y(wnz8B6CG9213RZbg9yrIlO3LrUUzsWRzZPhyjdeWvN1GjJKHG2BMpHfTWyjzP(aaBAZQR7py9y9SV)FHnPFY0SjO0vDgjSR0OJ0XCSrMmEiyKY90Ia606tjqpW2rx9jezYajbbZ3fxDA2AeSloTKjeKc0AQypIL9937LjDwKIBelmih6pwzks8YNEY9y0CXytgTP6yNUMk7h5gO9a7OY2P7JFQzOnmzevtPC1ytypzSYBIGNEQrPKooLrmTvCXjK4XE5k4)V)YEf83af1sasmIB4co5D4RRVt(qqtvVcVgl7oHE0n54q4sR7WdLYqK681pCsVoIXIDcNnz9LGGXXXU1x0FlW1Wag6O0B7loza6i0Wq1WZaVA21vyYnYokmmo890LZ3GcvNgozXUPBRFhDRX7SodyfFBi(sbmQg2I7aDeWKlv90tw2pYMIfxV75BYUbjxM(s99XMPz3xu)Qi4K)q6G001o3utVsZ0QNbzDqr5JXGSTnzCa115neVsX2abWBZXRHisgVXBVoIqBCrx4gh6y1jUTpvtSPtdxN9lgs08Vf3MzRkTU5DDB310RIZCO81n7PNmUBvxmwEbhYFQED0VvvDCx(TogaDIcq7O5bD8pcQ8oK1SkA2RttdZ(eL96GgMSsdBC1gZFE39P)iV92o09HDXM4J(fqzYW30X91f7IXd6Z0eA(QpBGd68kBOIuWB6l)IXdBKLxjDx77WvoYwZXEsDo2qYX60ey3Fdt9)5C1MTZx4rgzvZUPR9TAk8IZthNZICVo2QfTRCQPt73Y7S8U52SY3O6KA0PlpWI6709fJhnG74sBIZRDWw)Xsb1993nR9F5F4BM)HTiGX9119D3ueSWL6k4Nd3oEJbTFF5t8pO7d825oC3C9T93F4wM7Q(nQvPMLDB(cfpzuhzDdAjCtG0hy5YddpYbgptTNdTjsQZbUV5lF8pH9i5xFmLEvFJ0d0ApEzndZPrqVQaMlcXsArfc5Z)1FPY8kA6g9LCfE)c5Phv8aE)qa78lW3SM4kMMLMUA8f4)DISae7ceEtaRol9v7ytJuCcQyz6lswu34nLDUkBcv8X3lEkWDU92GSPaiXsRs4ivamojmBPxAEY8hR8El9Zuz1NHV)LzEG(2CjO3CWA2lFYyX1j4WtRTr8)dUXUBME0I4OVy8jNvfAH(O2jIerVDnYQNsE5SMykkvTPGAp5hQQiI1WI7znxE90G(E9U)U1bu7Qa4hyn04gdHy8O(N5STaV8x3xxrj4S2)nxI)gtd4pMBFQLAvVPgqTH(pnC022(PowA(KEfGhdHx1TXRI8e7eF67E6jx1zUP2u19z0Jlz)kwUwT7w4N6uUo2s0QwD5FsU8QBBIwBvkkoRirDgPQMQ3qIkTk4gwqKATTUU10gDesm2o8ESjn9oS(b1yp()Zdh129rB(EuAP3G6TDFaoEDdmSoGDNEdVfiq539YVcST9CyTfNDLktMkYE45)q3gnm0qlA6nzSUTozlIQu02I)nm8mgwwpY5XQ3fN2XYern0YWIGJGZaJft)(0ozB2rfBAQXk4KeAST8FumBjTYCsg2c2URjJz7yQYc4B7pzt1ht)54HJ9ZbvDwQstdapMtJl)SRGIT29W6e1T)d10HdpdNEeLhcIhUQiGA)Km1ZAldhFYa9Zv1VzsuorUohwa156qQ(NePTfuY2v5WQ6N8OTgwNPdl1FsJ2f4HbySZ)GgzkijVVvOJP8K5fMNs6Nc44cizVLGP8XVAzrrA(7o(4hE4H(pK8aKF(CW(WQJjpzJXRV(a2wEKylF1eTJXfh7nPA4DAnKF7PJo9Thlq7xnrqeyqdjeTfuN82Hdh82JXZ7r1ZE9en6idU1)w50h1PP4LMdIW(0KO4TGuRzLxGQhxBXHwtO0k9cJNggFFYDqe0Ff2(yqqd5FIrqrNB7Y8Hb7wm9wMVuf2kmOYWGBjF9blanQOPgC6asnyN(jm6f7NnlDvlSotsDrr6ga1PRrfJRS3Qv3(tLlYi78PgXl7ZKQvO4N3hZzPPkrCl1LUgOAZYAhRn4GNDX4boQ8r7Bi4P92Dw5(4xJkDUMc6sv1WGYUnSpBmRTJZq)StTz2agS9eAiCuppQSt1MzSli)ZwsthbTNkL4Udjx5Z8Vj)Eozqa1(TMcjHYn(8hpJhAhV712guviYU8sSyO)DWmxwuLDiG6GZpCk1q3WQ5FIzqrTTpG1de8xM8z5xxMCvJkuMLbARkNdz8TuGptNZrhdl6vG87(c6lKu(0xUsq7E)Fty9wmON8DK3neEL8PsCWkHikkW(fCbyXO3lKaNRu)mQNBjvLsnNnyQ8jiLyCvZPbVkKCCYN1FzRuxPBUu(YWGO57pIjNm5N9iq2IIq6hiWffqOGfzNDOxznwmxgOKA5vFKqWBaUzdXSGrTQkzMdLag5qxB1kZYnBzuQVJ2AlEDlUZOLllHg9n2YwyTxrgHS5(gQ4OLhSSiOyDexEHrd4dGbVM5KpYKvKvj28tyIDIqCuku1KHcDr6z9e2OzAKOgMWa8DaL9gp)7YLBqjQtjwqCqjMQ0RrmGPLXQ)nQ9f2gvPOWfb7nfPDwv5zzqfVDQPPbGFzpWd3D5txLagMIrKkROJOUfOEDq(rDho4igdNTOmV5HygN9PQCGLHA4Gowxqz6Rjld(ZhFMLdAT6PUmURfJ9)2qFWhZrc1lWkEGbznnC1Qaafkcu)uqVbeoWgbj9P3gLCJxK1TuYVGZ(gXZPCvY9HIMh5rEwpk14McXgqzMQatMJQWTFIOLM4Bxp(naYMMHsdJcTENdhnOJ17uOj(Rp70T)yGykFCC2D7xMMv3JO4oGvo3Dwdl2InNBt6ZNmC9mIY3iYGJVVnk0wXe3nCK6p4ZenDiSvdnDZwkQ9vJYIB9FxpVYKWy(4srU9RG)eM3ipF6s5dhA06mlnUFHc(NCrH6M0DRJgfbCquq5ZQR8d2dDkzqAWheTNYV(scvMQ58q2Ql3XMeEDjzDb4LO5LVhWpvZDvKVe8z)9K79egW(B84Nz7cofbpIrQYBxY3bhKLakpngW4QaBeH8ZgzQXGvsTCbKfzfPjEO0Ldx69sli476QIJ7N0RI2jC3IoFf0EX4tBEBPns9LxADb2mlYf9XoEVZcPEpqTkytgD6GEIGzDam53VS9C1faTA2JvxJGRLAnxprVgTmqBLVzGJbDX(qrB0farTfnENW2ifpFV0(d4WVHsvbrm58n9kE27zV7gJgqVaxV()l]] )
+spec:RegisterPack( "Shadow", 20241029, [[Hekili:T3ZAVTnss(BXyXWifhlljBN4K1slYMh3MGl7gSo7MpC4SmnvllctrYJpShFWq)2VQ6hK9tskz5jzomalMnwSz1vxD9UQU5fJU4BxC(C)cYf)9XdhF8OHJF9GHVE4WHNEX5f3NsU48u)GB8Vg(hX(RG)75l9NNCh(Z3hL4phF98KYSa4rllksZFZHhEDyXYYRgeKS6W8WvLr(fHjXbz(lkW)o4Wlo)QYWOIpfFXvMZ9PN86tE1fN7xwSmjdMUWvVdGC485e2Wj5bxCoo8dgn8GXV(nRVehY6lltriT(ZR)C1dFf8WVNKDZ6ltIxF5)(BhYW91x(Um)8LkdDmm0rJgmCWjwH0OgMMHVeE4x)0FE9LVpj(zf4eT(Y7asa8kkZ3LHawSik86LWG699LH5PKSW4RfJlVFfyh(6dgE6lauIdERZnoi8HFjzE4IqY81xwKS(ssS)vreaz(6H1iY7EFo(0RVochwYIfka5eNZWPmkZ3a08gsHTNpcjn)1saIx(1K7izuk(C43(yswryr5CLrpeh9BNd4W5F)nVN4J4gjUi7EGWKLSA9La)HywacQFCsXseMs)Cn4EfB7)B3r8HT4c)SRrum)o)01xgLCDyGYqpfh6sGW8DFejbYsy8fNhfMxKJ8WlcJIizW)6VtLiyuX5x8xzCCzHPip8fN)UK48YvauiRsXLlsozVAoWZgWguGFu0m2FmdNaqcPilmOaH95aSkGTD)loV36lVciCdwfgpFwEA4nKzHX5(XHf3pOewdp8G8awe5FV6Z7V(sV1xopPyWCYTGiiWknlnY)6sYGmYkFySRVCkqePiI0SmiWpVywriUmW5ypK4fbBdYJrqaOuOzmr)Q18mo1cwrJ1OwcAWT(RsdHf9SIKYGLWY((GiYm2MuUgHGp7LXlkZIWvXC)SBIj55cSGUqPKcZXmlyE9Y9myJ5xjbLfe(6ZRATfghtYM9)ugskkZRxEQ7UaHbKF5OoWVG4otSknlb(H)Ly6b5l(8JeHJCqeYPY1ZUdKiMnh52vx1iTyWsIFuXYbPbfu0F8q2MIG5G(AGIc)BizvCf5KIzxLedRJIqs2rJMnonOr(HIWGBG)0Y2aG9hVDypNQc0p)u8DHD6Sv4VjVPLcRqq3u88biuVLyhdorddmMMAoV8s4fTWyq)9zjlCicDBs48fa(r)1AMc8NNrYkP7)1mfckGoDeX1x2vg(NE2B7eZx5abx6hLOXVFU)TeuVkJfF8qykcbf5(ZNd)l)m4zGnCk3EEcqFKxualjOKJpZu9m0j)uN7KpcvDk6pDRKTfnvV2bDPgNStphnSPxeXvBA3cJH1nYynlCbWcaYF5tNmw53xTImpe9(5CuB4sF0EKYBEDuYv(r4pIOb1UufNz4TGO3SCykLXnCCU0iZfNdqFr04d(x5edNvUBzi6gXQKBPma(ihbAx9UdsZctGT17fMwWXsIfSn3be81xcgUPmpeMxpOwTCsqs88CfUO9SOl740a66ytuQ2OXf7QzBIeWDHH7GYMqjWflxeLUi2aDR7E0Xb)SU2wB4ukLBSj6Q19T2xeF1pmEtwdcpy)2rJwFPG1WLo4nBf4I57PArKuwOSoavw(jKz36dydSsYT58zskLslBMHnA8FfbwKuvepq1keOx(VakMhJlPf(LraCW)aGbxp5k)FD2Tf52CKR9zEOmyLHAyoa0zPj55H44T4Gu7a3MmmAZdwyZMhcK9PtGv2PvU8OUWbtMlYia7ahKUXmDb02XSESD1BjZmN31xU)6lbK65uh44EElR4fCyAMieWA3qURkwWzSbl5AqF6)dxTcmzaFxRY79QhOT8uzK)2)49)dG39FsquMzXFr4VcM)JHHfsJK5kYs)BdbxEesDLXGfMGByr5aiDUmXew(5ZaRZwCGRturZ1ZbnsA7t1CFSmJrfiwMenhjFbmJxDJ06vnDKyYQqIWpgP1OcCT5(xNwPDHFrEFuB1S17)Yc6XL(r4BnZpnnkeqEQcidhLSOdY0rPkNZ6OdE2ne5Yrfz)QSaDtVdTa8IADtIvuLrcqRDmMUkf3M2C1Fl8JYjnYRS5A96HonbGj5UyTytQJba4eUgckaycO8nh1A8mm(Kk4IrwmZppGeNJdsnGiThkRfcbI80aH7LPhUh)5P53hSe4XHizUr55QlobeuwBhthydsdSNQhvN8grkmlZGFhIDk3Mo(AUklI)J38OnaR42uckE3SYyNVkUWzSRPzG)XRUY3KHLkHYCQzHiPATW9Q4Kdl(yQYVkILQht4p7IHfmJ6ILTYqqgIybKzOFpsofm0Lb2oatWsVvyAnFbDfMCVDu8gYHo9oaotRTYRB9WW7iqrExKzhv1DvKFUc6sb8PY8g(zb(XeHKKgxHEeVsAtbK2Q9VAjWECt(ZQZLi6XLi)u2EXXGEIluZ3GT4NDKebf)Kya8ubM4WvDE2WAakO9CfSsjk4QWQTID9KtnAt(rWnd3I7E9LwmCGQmufW1YA60QjLTtAnPGucKxZWAIo9rlnwIOu(Jyt(Jyt(JytCtA)Jyt209)BBo2eNPXEtkSeS8Ke24K(gfx7zvILx(eZffNntijWaGv2hyZBOHNTMRCXqAr8uTSDTiIk5WmwR1KuyDLfUOGvernjX)gmbRV8RgjWIwdmmbw0SyzuImCivmQfl9lejcokelXa(3reA11qcnpvWVOU2dJgl2AG3NrwIUVkfBGVXPP0nG3M8HkFGSWCOMJ7ws(xdcO2zdu4LWTaRJrkwgBmB2dFXCJWwo5rkfYOCVJIu6ZiE3lYfp(3cjUkI5vekLKSyryqiWqi0NAar(YfFEmYuXCgaJPQHKeKMW()TPE)Dljb3at0ho89VLw3FS0(iNqiomaxVYpN2FcXusB(fwkwUcnRQSrSqKcJxuwftB1ZShVBpHRtEg(5I7CvbQQb5Qbb6ghDIQCVf3Lps4UmftUkkjzEuzogXRFqrvu1nHihnS547AC53aCpTElBbyGLIA28g6XptOxDIP6kswojJwk6gJlFRNRtKMlCjnBrz2928cy3ox(XbK8ImqxoMOaB2IRLpKNi96XEFCqvF08j(yQKp5C(G8rgR9da1Hc2AJfKD5edzHMS0APGXFX)gqdsEjwA4VGrOsah0aSjmx4ibQFbMxuPDcxNTgQIEUfrq669jLRVCjTg0avn864qqLKpQrIzydHrymAraxXfjjcTBcv6MfzNrEPndGIVu9mBfb1esXEIIW7XY(QTQA1Ae3xdJGPSxBse7iw8VBS4v6s7vOo9nK5o26VclOzrLMBHbblrkzonoWH6qSljt0rskNQLKYJr7Bny3wbm7cEouyz9LFGdryGXWFoVedUOAnNSGbW1x(xJOUMiGc2FuSULr28Z2W)8dMdzt37z9m1uUPTMtH0VZPisH9O3Lp8acytOOqdSFShJ0ag)preyK0kjFg5Ej1ovJsiHgMd4tbzoyhXpclEr1qpWgXeEZxY8WOwqrvk3A61edTXuwxW6OZCRPaRAYiyyf(fysy9VNKzZd13lgdg0aoiMNOy7wW8UpFzsz0CxnZaQyN3JNZ9x5FnklZ6jwQXHRir478Qt(fzwpLE5yc(yMRPvlkl(NYZup4asgyHzgnZuG0o2xZL5yJJTygOWsjN)whCnwCTCNzvfEh1mRL3Canzf8eSAZLUQqysVFfiEcokn7oYv2Cb2IVkIjw6LHqMaMnX0sL(gAZvguccFc3x0omj1UX25PEu9e0a0n9H(mEgNRroloIP4JTDV9T8wVu(TmJlU2YV6ZKvtz1DD9qUv3pPfFHXlQTr3OV370OF4uYwTHZ22qcbtUAqDjelZ8z2vfuY(ThmdRPReS5OqhS6wXJQKwhSTkhZnK)kKZJLdGk7fcBipYuF2uneHf6rosfPJ8yJDiOHNS0DfMLAzEUoubvzhV6rnKTVIzQzRirgMeLSZvrHmAJ4GK8cnJaVfDy6oQRxjSgJUUYv)fiK)skcIzSijg)VL0i8xG69rF0UJaU)N9I1x(F93i3egf(FJ9tL8Xza8edtJeyldneuMZ(v88JmhdrsG0SoqKEmhO9TQ8zDyqB1xZbV1mcTa)dLY7FZbi7MZ)iHdw2Y(iZNcprTHCLwk3U)0VJg9Duo86LF3ZSQJUvwt1zlT8SBEsp1GqmfdQBhe6lkmUk8guXFxUdMCuRT(GG6cmZkTTmJA2AFi)yG4yHy5acGXDWCPPap(jjPWUxMCq9mzaBjPqSZi3IYDgNyH2Co(wSFGE8yyhrOKs89QfF6ggAQKAB2661WUhtDvNCzEF6qpOt8Ah0KB6pNvcuzmhZ8HR4SvFwlSI93DCJAAPzo(0uMMQNm3zwMgWbp6y5yRrEibQXsJCuIOhxnYtm9TT2HSuvXIWzOdlNMHlgNvdPWIN)D9(5TUqmE2kcZoY4UuuIpov6wQ4VRS0OKufTbjpRv22BXvRQa4DLCVnSl6bvmeqoM1som)cMTYVGMb)AAQYdQ9vQXcm5Qj3r750yaPmr4exRHI2MdIJm47PtkW)sN1wZYevHuRLnSLtv3e9ZzMJijS7xMeFQIxCbl9JJjrcgCL0WX6tthjZqOwaqzSOof8GUEPgFLuYFwuc(jKry5aAwTAgv(RUUGSWOtNlgf0sktR1zwneLOw60KQXyXtI3kAk8UQmd)J3Cxi2HaVXwQSQZYH2H86XXByqfR1tj3MC6MvAWsNSUoL2Itq4ndnSM7buXTGeGWL(qddxvVM9fGoBOXrLtzl49j8t(te6QrDbl(WVcwmiSdxgvMoWhToClnjTHfdSMhRCsaq4TW7QW2wVpENFyH8ovRVkvrztSBEnLDGg5tvPGnM91Z4NCoNzHR(LAMZS5S27InPvfb6c2yLAMhMuMpd2svfS3uLMMPNMPHojsIwEOeUCqZd9xuvj9CP)exsdhm(KN2zCkDwgostS4DjRsJcd8lqc1CHmsc4sDaEw1RcfL7Juj6Fwi3x90SKccMOt)RXPe(hmPgepaCdbibDQIYc58WylW8M5GSygHzfXRzQaJ4QVQPUzI6ayOknSe04ng869cFaP)sevuOq4UlUSb3Oga(eqe0luLb1zYRO9Fc6Yhqdib(LQZcwuiwIg8dciIoFGYZsyKoMgjW7p011Rl9X80sqbrytmCv5kANrauCkb11zqCZSziLIkZAnCgRwdETj(0Oq5oSuDhvLjpt2bkU(sxk9RyOzhes(jebjJoZ4GK3pBNzxLoZQvnGoOf02Vr2whXzkFDMFgDrE2njavu9BSf4AAxqb0iG5CPwC7OHr1ub0PtPzhCCVYZ80IL4XJ3wJg2Rkkg9kROMAD9RIazh)LEKM)PTxwo9UGiomfJq97y284HkIOpRIT87kfMAI8uFma1uS9IXGkilOfGs0izIxMZ0aJGl0XvgTI55rtrq3flVokWARMw33wue11bur0xDG7B48T1AX2oPx7DBWyTNz2hP1EtszudE13AGb97GkWPwWjzbs7NDcDtssL8pNj5vMtzo(unzIk0UIj0IJUoquyaSomOUncYywRz97iH7Ql9ctaVsG4khzg1xiLN8ViWsgt4UkqD7Sp9uz7gTlyBSYoSvr7JwT1BTdkHKsOWmjXAyOIL04gORfa3JkPY4yM(xFzwsc9mmnQ5O)B1jOFio68rmMo6kRoRBbSULCjjJp0vsncd76AAEcjNELtHX(SM1HuSe11lCac37iHzyQ9(4B(KWrrbc9F8U3ttq0ixXfVdlhGKdq61OdjPNOBaiLMvY)1hF)AXPQx3GjhjXAQPh3yloN8LZ)etM9lF8t1j((d1xNtNxYKR792SGLjX9h0u1v24l2jrrXfvQqwROYnVKKHx6dvp2R6GzVgHKQZnnDx6Sxdoj16nSYy3nsIU7Y22VVNMgV6IsGcswSDx3B5O6uQC1cwYD5AGryPRZy0qLUfSP(6SU427lAvdxXvTzHb8ZyQJSM8qAJmCII)DUNcvUufd)E29lQUBp6sSjhPgiV6s3HR(9neTSNjshz3P6rBEo1AbVS3bvgS4mT9q4OH)VeSlQqZfdqJNWEaq1cZckX9PQ0PP6zcY6kvzC6nDhBd97m)HfBM4bUIUBYtihs1lOfUHLevMOtsmxOZxy3IoIYOIWd4HnqfsCfRC3dYR5ZKXEDi8S2Za14b6wBQmFlfPgszR9PJw40ycEVbI(0JLAa7Bh6PWiIQsQYhrw3m)UILLIMovTtuPrPugtjUIgyf3VOneXh4RlyFbwy41QyyeEHjHu3wUiH6WjEPTd0YgeDRTZMIArcRzlPwF5aJVo5hofk1rVyIH51SSPWqaFlHhM5hFn9iro2vyX7aVv66njylD1WEU78kzFRTCBeUn(k92aaiiDg8wIsG689txdeOoDO5yhAlpxhwQoDM5yVTRtlNToEzIuWlYwquk4RIeFthslfJSw63MADoDQCX7TUT6pVbavBJ(R7KdF3yHGN(vtBoxs1)w)Wi2gpgclLLAhfAQjhGN9mlz39W3lniulAsa7SH7kEVni7npYCx0qAwvL6B0DLnptg(4ES7JZanPIpMM1GbT3ZxVYmj8rHkZR10xFknvT5r3LCfLzJnSwvOf0EefIGJ2NiIll6xH18llgMrG6qVAFdxLs9qIAL5zS3(z4bzKQJCoYsJQY9llswXQgdwYDmgO1F()meTkJ3pXVljgMk6JFMrqvpJ5DM5deBNWa6n6x7xbXX2HOPreni72kthNbftmAa3Q5hD4ESl4AKwidO7mXr6ZXj2Nd9yu1MaxHW2rORigQbARIO6W9LpH7PR)SfwzL7jWnJJ2XUOPPhnC1TTPosL3jZGvQbA8EZicoeR3jOyJcHSKiI6JTXNP0CKDeIvDAOnnrYTIzhfN3jmTnod7Am(rqtDWQU1yytky2PyOrcy0aSZe00r4Vd5cAGgt78wl0yLoYTJWd7dxnqj3AUpnqXHI)DOEehZGAWK6B(wBQuDi)khqwUNn1bST(5uhUN2Kr262w0MKGLUASJqxXtCBsT6EPRd3x)elN5a(QPoud42ZRyhH8J2PMroms(KbyLoj7z6UqAPlZAdWj0tIAi9QebJOPrS0tpdVEM1R)Sj88o71BVMqShEOPepoDICMK671ZDjg)f(8DqddrmM(pN)poBc2zB7mWoDc2cBDzJ(Nss4HDyTU5uWnbQCcynB6rpvcwn5G0tbGjYjExdWeBjL3aWUCVrR9KmSdzV7L6o4RtDKbOn7CPUc2WDzKWJCy5)3Kj5rBoDKdVl2Py)4HnG9Bz2z(TdK7OCAm2rCH7mpx(HnbpA1wUa8JM72fG3bEZ90rmCy1H8y1Hp(PpesxtXJoLMJF6dG73IP4PkOixa(rWmAnbEv315pBZYI3tzA8CL31ndf)9D2wzZGdt57KzWkvoy(gMtBhyO0L)MUUyZRfUoUQPvGJ2wQweOuV6Q(HbXDQtwUst0twcOEekxyWTbTHBjD2be3P0zhPX5rG1oG4Vvy9wLC3NU0WzvtJ4gcBZu34WfnY27jLvKJFH1Vz42tvUfCa3DGAGMWyEBcAdHlu)CZ0rOk)LOrdQ2(i1iVd9j6MdcSxx3NE0VxWWJXBeHKfHrvN)48bvo1S)KdT9jBz9NTnsMLsmcHxeUyYESRmSQFd7FeRVMOyWVaBuIjkTh8l48rtg(IK0j0p5iDbgkThCfmgTzWG1)w1V94n61vVI43Y1HzRZ0zaP(Xuz9N)t)jXgV64e3DzSj0YL9NDWJfwc3KXMp3tTV2oBYXE9u6f9PaXB4dpOpSX9BInI1Vz4CK78B(Xzto1R3E2(yH8WdUFRPJCmXQDwho1v5510FWhEyVg7pU(1jjwzaCPZgrWtbGJuwyqwwBEUFZjJOF315loKwY(aHj)tQSyknkiYtbZ4lO3rytOFuWC)MYFzQuFXEn3l8vPr)5h5ztn(dp4(MeYZQ65(p8Gf1REwuo6PIAfQ35CiR7E27HsV9m6IEjkJENFXLMsiVGDOAaDpa3KQaW0XYqq7dRLqhuyS0(5aaGo1tX3bKuxX2mYB47wZ0)YOXndDn1ykBZdRNSThiucJzp5cQmo1RLU8(ZGkTDYhBLMXEEhEQXIZ3lnrX9p959AuXGNtvk97pDIE)ddAcQ(jv6yZyDdY190NJdCUy6F2X4(JdrcNlenlctBH)W8thYgqSDiVUHKsGv6N)VwiMurf7vkngmtWQNK8INdPSEUB4DzkgxmOpyxZGbA6qj1MM7MEnBPeMf3IeC9UeTd2uF6w2pFFxr03Iu8LXYgKlRn22uK2lzvy2(jb4mlQtnTEj7NWa896MEpNsItNOC70Y82Bl0bAAN8SJO717KlN1)8t7LZAluulUZZiUHlQSgwFBTc2xR(EYmr29g6R2MJmcxS6nAFP8xqBaW(EIJj5u(MKrRkGxoUglg7o5GE)jceqXR)ZoAi6wMHoNrNaEgBNTxpgHPJ7lPA(j76k1Y2wBkwDFiXfS2Mp0tFJWZCx12fW5zJ9uo6Pv36MEn5NmTFvoUvY3o)Mv1GywxLzMRETsd6zLi0B0ZDLWS9hDGtI(b6zV75J6lMtmi2AJp4F5G(3F73aQK1G4DhQB06NPRSuR7BmeI6jrt3HPE6EjS1Q)bVl2enjsbzRUd4ogsbm5kiF4blZhayRUeUJVFpni5Y0xAZ8yt1J7RV0QGJL)r6cPP7tstTFvIIwDPS792gqBDEXcwzHQIvrXow91hQAkcQBYwyRpu70(dUZ(sPnEQySRRViP5VdiPeFMsXNX80y7W21nGs3A227zsJTn99KnEZtIKulplNn2ADLgQGR1aOK71(MTvPiPmkDuIN17VZ6(T0wAImia4fhZlGaSMyJdqzZhjfToOZCVf6znMeB)QM2gpBZk)upE2ik)WVfxWI2Tr7uK3g1Fx0VS7S(KDJ6j4U3OSBeyzDkBTf(h3LO0pYBlshgeGzXgZHHs4rV0Zn9cj6Ju17z9QwCR0UjfCQ(WpBYiVoP7RMv1voPTMt7P150U)dpOttGz)LmHB)hXvPO99fUfZURTVk3owfRDE2VR8AwrbNR0LtxT)wE5hUD(sv5WKApz71J7Tz9Dij6(o3QU2j8V2RR6FUIyzPDeQvr8Z3T33gAyO3g6R1(QEhAC)(DMIk)9RC(s)M9RbQRNbqvTJyuSYxbs8o8HZQlF9BupYuL5Qw4Wm1pBqag7QRuWTtgXYUupX(5OnBVXG2VRmx(d6ohCZSu2fRID(6cC3MZkjlNQW5SjN4WA9MF3d2XekQFB8Puc1EnFzeoDSss2OdHR1M(dwU4bHxzpJ3P2yN2jzWBpNgiXESafPVpL(PahPhObk4XRcZfhLpwbIweILmGMB6V9p(yLAF0AdA(7CmsqEy(f3HxHiGPPf43UsCeZYstxn5m8)ovMXMDjCDfHL67bQT8rJuCkuXk5xKSOUZDuM5QWBuXhiM0zWUZ1xtYMbGelDffhXH3JtcZw6NMNm)(khoMhElOCygq9ZQ(nm5B9LLaEIVafB3)s750EI4gvC)JR1D9)dU17ANE0z)lFkZMGrkFoBYrN45cmYs(sg2TgeoYW2Ml(h98QLK1Ge67zphrwZwa)NBp1iwNjvdN)SEB)TXrS4S5BSg7rZzpy8GtCwK4N(l4px(A5SsWnxW3gJZs(EZB35xG0vi4zkE1Y3lSuGlMHdNnTLYXAQDFo(XClXTfeWwAYIrJ30ESWZshwOxB0jJKtjMsDwQebC3KaskL1QaBt9IrVhrJCiBC3Y1F32fBIoLZZwa61Ab(DYLm3Mgf(gf)QZmzvlNQzuR5Oy7KhMmp51ALX6BbmJoLyN2uJnmpBt7nULG7NUgDSH1XVlA5XgW)FIB(Xgz6)H3gKYSAVJL)K)9ho89VfT2s)(yw1rsyOM(0wScTftRkr1YmyoU4stW)QoODjpD5((A8TExKGvdhiS1ua15trdo8bS)OtWMvu7KiCuvACR)0)dHleu03ANam5OH6RRfG0g9DR8DY26WcOovhsxrYYjzOtaBkOK1WXHfIrZapYUFJH1j6WYpoGKxKb8IO28TbEOPEAUY(k(oyWSSxsUDHyLJcTi6StuemsYZBf6yYpzElvtZbc10)zyM0aLQtE2YII083C4H3D3DdUl5ULe)5dcswDi1MYKrdh(YHSP8aXu(SPAlJZo0FAvVI2zi)6JhF8RpuG2pBQGiWGgsi6kOo61Jgn81hIR3dQpaBt1OJm4kIv7wm)dVBj1ZL5alCaTxj9xqfRzzBHM20UIdDMqPLjk2EAy8Tj3a6i)vy6JbgnC)t0KK672UuFySDlAwydg1nddQum4MZxVFHqLkAIbhZ62RViL0z9C4l8k8kYcA2Ast4UdQlqawYz5VsksDSYUxhhUimWhJ7NzocHryCbVwq08zZ61zrL00eTehJlrMhQpA5E9msSFL(wTYRCSCApyRpvFpz)MuQtzaq0MyY97P3EUlFGucJup9pEwRdf3p)jdDKTMUxs3J7V9BLAE2ZItyEj6dN7areqja(lekA7AkOlvcP77vpj7mTVdGE8oL2wDQlf1DYFswls(zPNEjWD96Y7pDsVrNS)jpxglO9yk8BUYj5b6lVN)Y(guf7brjoW3YjEoNEnbsWGO9VNwY8ewDeyhWK8LjLrMXVYRRiQJiPyj(AZ9x5JLR4kwASP6zUIqBf(xDYVySRjM3zP0Pf33Klv(RoH6kjTCi4Ygbj1QXALdFmpdBPzjbSgM8B3r)vuE4J4QsrTnlgYFpuedX2Zx)(5chEE3)uOIwCEd4ZiVcq8QxqZOalrKi9N9nPhOROjkKzjxjDv06FMuLq2C25JGFqgOP(nSQicSCzYXPawT(TsDLoU35ldjrZ3Detozki7EGSffH0pWrJicJLG18B8M5NuxhrgMjz6QfgHTS(HvUvyPqHORfnMSzgsib3bijM3MdMLxuUxGSDgLqjc7hObtIq7PN0D(A3Ym)QKhxlOuNsDNzh2Gor1Zwc8SCmOhNg4ylr8TAzRrlxggm60bltHTQikkDHELKPRu6)gfEm5dTuzifd))y5fyX4r9evCsghpK3ft8sMq9Gjzft7pTjKmXyHdOkj0dtzctjk9D9fw0yQsrvJcZv3aB2x5hCtUC10rLHIbetkXazFbIbm1JS6eGQnd7IoWOWfKDMgWDJoSTuf2JYAkEjUKMsaEbFWNIBYNTkbSkfJlSSIkpMqL6K8d6nA4bm8GnOm)5HyofgqZJfMYVrd9SoGY0xqnlemFYjwiw1lADEBxdgjcgYbbyuWiTeZPfknnlC1kcGcfe1FfKxagmSwIs)61rjx5hzDkLCkWzPh5znyvYTHI6p6JfJ8UdmpGwStwctCIX3sRMqqIOg(430A(rk2M0LsnhrMyBxNeMyQ(XBP7imItCTeBVcyt7c7quClWkNZoRmqBWKZ1G9TJgT(skLVrKbpHv2OqB0M42HJ0QU(irthmB1qtxjNIaELMlNvS2UgW2bVIEXMHUPkujV7)BGPlMHpFr931JFHznefHPNPFAl6GnOfYCxD6KXU1GMvaAdbjQyyq95zUmvZoLSYzUnuj869uLqaJaQf6Nb8tvRyf5lbF3)EYT(c9C)tEmwSzb7xL7XOz4vW6NGfYsaLNfdyCfxIiSqwReoz8qpT4fL53fXVVV0TUe(pswSy21GfVroVdMW576AhXMYTEAzK8tSkEWFBAAPtuE69ROTdu(S7ixvhDKz2ozUQwp8mcEDIX7FYjhpunDOthF8W(cx5DaS6IV0k4hHaZbS6zKhwCI1YeBDJ7BuxjTr(YHoAwl7N9bJsfjsaTkLvrRKLDJ8MsYDNRrgSUBjFMGtx8zFq9HJL3oJ4AVV9sGnE4fNdmyb4hS0tPF96U4)7p]] )
