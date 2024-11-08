@@ -10672,14 +10672,15 @@ function Hekili:countPriorities()
 end
 
 function Hekili:CmdLine(input)
-    if not input or input:trim() == "" or input:trim() == "skeleton" then
+    -- Trim the input once and handle empty or 'skeleton' input
+    input = input and input:trim() or ""
+
+    if input == "" or input == "skeleton" then
         self:HandleSkeletonCommand(input)
         return true  -- Ensure return true to close chat box
     end
 
-    input = input:trim()
-    
-    -- Parse arguments
+    -- Parse arguments into a table
     local args = {}
     for arg in string.gmatch(input, "%S+") do
         table.insert(args, arg:lower())
@@ -10713,6 +10714,7 @@ function Hekili:CmdLine(input)
         args[3] = aliasMapArg3[args[3]]
     end
 
+
     local command = args[1]
 
     -- Define the command table
@@ -10745,51 +10747,45 @@ end
 function Hekili:HandleSetCommand(args)
     local profile = self.DB.profile
     local mainToggle = args[2] and args[2]:lower()  -- Convert to lowercase
-    local stateOrSubToggle = args[3] and args[3]:lower()  -- Convert to lowercase
+    local subToggleOrState = args[3] and args[3]:lower()
     local explicitState = args[4]
 
-    -- 1. No Main Toggle Provided
+    -- No Main Toggle Provided
     if not mainToggle then
         self:DisplayChatCommandList("all")
         return true
     end
 
-    -- 2. Special Case for cycle
+    -- Special Case for cycle
     if mainToggle == "cycle" then
         -- Check for whole number minimum time to die (from 0 to 20 seconds)
-        local targetSwapValue = tonumber(stateOrSubToggle)
-        if targetSwapValue and targetSwapValue >= 0 and targetSwapValue <= 20 and math.floor(targetSwapValue) == targetSwapValue then
-            profile.specs[state.spec.id].cycle_min = targetSwapValue
-            self:Print(format("Target Swap minimum time to die set to %d seconds.", targetSwapValue))
-            self:ForceUpdate("CLI_TOGGLE")
-            return true
-        elseif stateOrSubToggle == nil then
+        local cycleValue = tonumber(subToggleOrState)
+        if cycleValue and cycleValue >= 0 and cycleValue <= 20 and floor(cycleValue) == cycleValue then
+            profile.specs[state.spec.id].cycle_min = cycleValue
+            self:Print(format("Target Swap minimum time to die set to %d seconds.", cycleValue))
+        elseif subToggleOrState == nil then
             -- Toggle cycle if no state is provided
             profile.specs[state.spec.id].cycle = not profile.specs[state.spec.id].cycle
             local toggleStateText = profile.specs[state.spec.id].cycle and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
             self:Print(format("Target Swap toggle set to %s.", toggleStateText))
-            self:ForceUpdate("CLI_TOGGLE")
-            return true
-        elseif stateOrSubToggle == "on" or stateOrSubToggle == "off" then
+        elseif subToggleOrState == "on" or subToggleOrState == "off" then
             -- Explicitly set cycle to on or off
-            local toggleState = (stateOrSubToggle == "on")
+            local toggleState = (subToggleOrState == "on")
             profile.specs[state.spec.id].cycle = toggleState
             local toggleStateText = toggleState and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
             self:Print(format("Target Swap toggle set to %s.", toggleStateText))
-            self:ForceUpdate("CLI_TOGGLE")
-            return true
         else
             -- Invalid parameter handling
             self:Print("Invalid input for 'cycle'. Use 'on', 'off', leave blank to toggle, or provide a whole number from 0 to 20 to set the minimum time to die.")
-            return true
         end
+        self:ForceUpdate("CLI_TOGGLE")
+        return true
     end
 
-
-    -- 3. Handle mode setting
+    -- Handle display mode setting
     if mainToggle == "mode" then
-        if stateOrSubToggle then
-            self:SetMode(stateOrSubToggle)
+        if subToggleOrState then
+            self:SetMode(subToggleOrState)
             if WeakAuras and WeakAuras.ScanEvents then WeakAuras.ScanEvents( "HEKILI_TOGGLE", "mode", args[3] ) end
             if ns.UI.Minimap then ns.UI.Minimap:RefreshDataText() end
         return true
@@ -10799,9 +10795,9 @@ function Hekili:HandleSetCommand(args)
         return true
     end
 
-    -- 4. Handle spec-specific settings
+    -- Handle specialization settings
     if mainToggle == "spec" then
-        if self:HandleSpecSetting(stateOrSubToggle, explicitState) then
+        if self:HandleSpecSetting(subToggleOrState, explicitState) then
             return true
         else
             self:Print("Invalid spec setting specified.")
@@ -10809,21 +10805,20 @@ function Hekili:HandleSetCommand(args)
         end
     end
 
-    -- 5. Main Toggle and Sub-Toggle Handling
-
-    -- 5.1 Explicit State Check for Main Toggle
+    -- Main Toggle and Sub-Toggle Handling
+    -- Explicit State Check for Main Toggle
     local toggleCategory = profile.toggles[mainToggle]
     if toggleCategory then
-        if stateOrSubToggle == "on" or stateOrSubToggle == "off" then
-            toggleCategory.value = (stateOrSubToggle == "on")
+        if subToggleOrState == "on" or subToggleOrState == "off" then
+            toggleCategory.value = (subToggleOrState == "on")
             local stateText = toggleCategory.value and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
             self:Print(format("|cFFFFD100%s|r is now %s.", mainToggle, stateText))
             self:ForceUpdate("CLI_TOGGLE")
             return true
         end
 
-        -- 5.2 Sub-Toggle Handling with Validation
-        if stateOrSubToggle then
+        -- Sub-Toggle Handling with Validation
+        if subToggleOrState then
             -- Convert keys of toggleCategory to lowercase to handle case-insensitivity
             local lowerToggleCategory = {}
             for k, v in pairs(toggleCategory) do
@@ -10831,19 +10826,19 @@ function Hekili:HandleSetCommand(args)
             end
 
             -- Check if sub-toggle exists in main toggle
-            if lowerToggleCategory[stateOrSubToggle] ~= nil then
+            if lowerToggleCategory[subToggleOrState] ~= nil then
                 if explicitState == "on" or explicitState == "off" then
-                    lowerToggleCategory[stateOrSubToggle] = (explicitState == "on")
+                    lowerToggleCategory[subToggleOrState] = (explicitState == "on")
                 elseif explicitState == nil then
-                    lowerToggleCategory[stateOrSubToggle] = not lowerToggleCategory[stateOrSubToggle]
+                    lowerToggleCategory[subToggleOrState] = not lowerToggleCategory[subToggleOrState]
                 else
                     self:Print("Invalid explicit state. Use 'on' or 'off'.")
                     return true
                 end
 
-                toggleCategory[stateOrSubToggle] = lowerToggleCategory[stateOrSubToggle]  -- Update the original case-sensitive table
-                local stateText = lowerToggleCategory[stateOrSubToggle] and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
-                self:Print(format("|cFFFFD100%s_%s|r is now %s.", mainToggle, stateOrSubToggle, stateText))
+                toggleCategory[subToggleOrState] = lowerToggleCategory[subToggleOrState]  -- Update the original case-sensitive table
+                local stateText = lowerToggleCategory[subToggleOrState] and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
+                self:Print(format("|cFFFFD100%s_%s|r is now %s.", mainToggle, subToggleOrState, stateText))
                 self:ForceUpdate("CLI_TOGGLE")
                 return true
             else
@@ -10852,15 +10847,14 @@ function Hekili:HandleSetCommand(args)
             end
         end
 
-        -- 5.3 Default Toggle Behavior for Main Toggle (Toggle)
+        -- Default Toggle Behavior for Main Toggle (Toggle)
         self:FireToggle(mainToggle, explicitState)
         local mainToggleState = profile.toggles[mainToggle].value and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
         self:Print(format("|cFFFFD100%s|r is now %s.", mainToggle, mainToggleState))
         self:ForceUpdate("CLI_TOGGLE")
         return true
     end
-
-    -- 6. Invalid Toggle or Setting
+    -- Invalid Toggle or Setting
     self:Print("Invalid toggle or setting specified.")
     return true
 end
@@ -10983,7 +10977,7 @@ function Hekili:DisplayChatCommandList(list)
             end
         end
 
-        -- Example Commands for Spec Settings
+        -- Example Commands for Specialization Settings
         if hasToggle then
             output = output .. format(
                 "\nExample commands for toggling specialization settings:\n" ..
@@ -11035,7 +11029,7 @@ function Hekili:DisplayChatCommandList(list)
 end
 
 function Hekili:HandleSkeletonCommand(input)
-    if input:trim() == "skeleton" then
+    if input == "skeleton" then
         self:StartListeningForSkeleton()
         self:Print("Addon will now gather specialization information. Select all talents and use all abilities for best results.")
         self:Print("See the Skeleton tab for more information.")
@@ -11051,9 +11045,9 @@ function Hekili:RunStressTest()
         return true
     end
 
-    local precount = 0
-    for k, v in pairs( self.ErrorDB ) do
-        precount = precount + v.n
+    local preErrorCount = 0
+    for _, v in pairs(self.ErrorDB) do
+        preErrorCount = preErrorCount + v.n
     end
 
     local results, count, specs = "", 0, {}
@@ -11125,9 +11119,9 @@ keyNamed = true end
         end
     end
 
-    local postcount = 0
-    for k, v in pairs( self.ErrorDB ) do
-        postcount = postcount + v.n
+    local postErrorCount = 0
+    for _, v in pairs(self.ErrorDB) do
+        postErrorCount = postErrorCount + v.n
     end
 
     if count > 0 then
@@ -11135,8 +11129,8 @@ keyNamed = true end
         Hekili:Error( results )
     end
 
-    if postcount > precount then Hekili:Print( "New warnings were loaded in /hekili > Warnings." ) end
-    if count == 0 and postcount == precount then Hekili:Print( "Stress test completed; no issues found." ) end
+    if postErrorCount > preErrorCount then Hekili:Print( "New warnings were loaded in /hekili > Warnings." ) end
+    if count == 0 and postErrorCount == preErrorCount then Hekili:Print( "Stress test completed; no issues found." ) end
 
     return true
 end
@@ -11285,8 +11279,6 @@ function Hekili:HandlePriorityCommand(args)
     self:Print(output)
     return true
 end
-
-
 
 -- Import/Export
 -- Nicer string encoding from WeakAuras, thanks to Stanzilla.
