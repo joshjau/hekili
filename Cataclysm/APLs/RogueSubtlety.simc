@@ -1,14 +1,16 @@
-# Opener
-actions.precombat+=/slice_and_dice,if=combo_points>=5 
+# Precombat
+actions.precombat+=/slice_and_dice,if=combo_points>=5
+actions.precombat+=/premeditation
+actions.precombat+=/ambush,if=stealthed.all
+actions.precombat+=/tricks_of_the_trade,if=settings.t12_4pc&cooldown.tricks_of_the_trade.read
 
-actions+=/premeditation
-actions+=/ambush,if=stealthed.all
-actions+=/rupture,if=combo_points>1&debuff.rupture.down
+# Main Rotation (Find Weakness Uptime)
+actions+=/rupture,if=combo_points>=5&target.debuff.rupture.down
 actions+=/hemorrhage,if=debuff.hemorrhage.down
 actions+=/shadow_dance,if=buff.shadow_dance.down
 actions+=/shadowstep
 actions+=/ambush,if=buff.shadowstep.react
-actions+=/recuperate,if=combo_points>1&buff.recupate.down
+actions+=/recuperate,if=combo_points>1&buff.recuperate.down
 actions+=/ambush,if=combo_points<5&stealthed.all
 actions+=/eviscerate,if=combo_points>=5
 actions+=/run_action_list,name=mr,if=buff.find_weakness.up
@@ -18,8 +20,7 @@ actions+=/run_action_list,name=sr,if=buff.find_weakness.down
 actions.mr+=/eviscerate,if=combo_points>=6&target.debuff.rupture.remains<3
 actions.mr+=/eviscerate,if=buff.shadow_dance.up&combo_points>=5
 actions.mr+=/rupture,if=combo_points>=5&target.debuff.rupture.remains<3
-actions.mr+=/vanish,if=buff.find_weakness.remains<=3 
-actions.mr+=/premeditation,if=buff.vanish.up
+actions.mr+=/vanish,if=buff.find_weakness.remains<=3&cooldown.vanish.ready
 actions.mr+=/ambush,if=buff.vanish.up
 
 # Standard Rotation (Find Weakness Downtime)
@@ -28,11 +29,13 @@ actions.sr+=/rupture,if=combo_points>=5&target.debuff.rupture.remains<3
 actions.sr+=/hemorrhage,if=target.debuff.hemorrhage.remains<3
 actions.sr+=/recuperate,if=buff.recuperate.down&energy.time_to_max>2.5
 actions.sr+=/preparation,if=(buff.vanish.down&cooldown.vanish.remains<5)|(buff.shadow_dance.down&cooldown.shadow_dance.remains<5)
+
 # Filler
 actions.sr+=/backstab,if=combo_points<5
 
 # Cooldowns (Shadow Dance and Vanish)
 actions.cooldowns+=/shadow_dance,if=cooldown.shadow_dance.ready
-actions.cooldowns+=/vanish,if=cooldown.vanish.ready&energy.time_to_max>2.5
+actions.cooldowns+=/vanish,if=cooldown.vanish.ready&cooldown.vanish.remains<=2
 actions.cooldowns+=/shadowstep,if=buff.shadow_dance.up
 actions.cooldowns+=/ambush,if=buff.shadow_dance.up|buff.stealth.up
+actions.cooldowns+=/tricks_of_the_trade,if=settings.t12_4pc&cooldown.tricks_of_the_trade.ready
