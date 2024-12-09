@@ -45,6 +45,7 @@ local reflectableFiltersTWW1 = {
     [ 162693 ] = {
         desc = "The Necrotic Wake - Nalthor the Rimebinder",
         [ 323730 ] = "Frozen Binds",
+        [ 320788 ] = "Frozen Binds",
     },
     [ 163126 ] = {
         desc = "The Necrotic Wake - Brittlebone Mage",
@@ -53,6 +54,9 @@ local reflectableFiltersTWW1 = {
     [ 163128 ] = {
         desc = "The Necrotic Wake - Zolramus Sorcerer",
         [ 320462 ] = "Necrotic Bolt",
+        [ 333479 ] = "Spew Disease",
+        [ 333482 ] = "Disease Cloud",
+        [ 333485 ] = "Disease Cloud",
     },
     [ 163618 ] = {
         desc = "The Necrotic Wake - Zolramus Necromancer",
@@ -164,6 +168,7 @@ local reflectableFiltersTWW1 = {
         desc = "City of Threads - Izo, the Grand Splicer",
         [ 438860 ] = "Umbral Weave",
         [ 439341 ] = "Splice",
+        [ 439814 ] = "Silken Tomb",
     },
     [ 217531 ] = {
         desc = "Ara-Kara, City of Echoes - Ixin",
@@ -180,6 +185,9 @@ local reflectableFiltersTWW1 = {
     [ 220003 ] = {
         desc = "City of Threads - Eye of the Queen",
         [ 451222 ] = "Void Rush",
+        [ 441772 ] = "Void Bolt",
+        [ 451600 ] = "Expulsion Beam",
+        [ 448660 ] = "Acid Bolt",
     },
     [ 220195 ] = {
         desc = "City of Threads - Sureki Silkbinder",
