@@ -1610,9 +1610,9 @@ spec:RegisterAbilities( {
         id = function() return buff.holy_bulwark_ready.up and 432459 or 432472 end,
         known = 432459,
         cast = 0.0,
-        cooldown = function() return 60 * ( 0.8 * talent.forewarning.rank ) end,
+        cooldown = function() return 60 * ( 1 - 0.2 * talent.forewarning.rank ) end,
         charges = 2,
-        recharge = function() return 60 * ( 0.8 * talent.forewarning.rank ) end,
+        recharge = function() return 60 * ( 1 - 0.2 * talent.forewarning.rank ) end,
         gcd = "spell",
 
         startsCombat = false,
