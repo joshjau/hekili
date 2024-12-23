@@ -1795,6 +1795,9 @@ spec:RegisterAbilities( {
         talent = "storm_earth_and_fire",
         startsCombat = false,
         nobuff = "storm_earth_and_fire",
+        texture = function()
+            return buff.storm_earth_and_fire.up and 236188 or 136038
+        end,
 
         toggle = function ()
             if settings.sef_one_charge then
