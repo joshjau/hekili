@@ -499,6 +499,8 @@ do
         { "^!?(dot%.[a-z0-9_]+)%.ss_buffed$"        , "%1.remains"                                                     }, -- Assassination
         { "^dot%.([a-z0-9_]+).haste_pct_next_tick$" , "0.01+query_time+(dot.%1.last_tick+dot.%1.tick_time)-query_time" }, -- Assassination
         { "^!?stealthed.(.-)_remains<=?(.-)$"       , "stealthed.%1_remains-%2"                                        },
+        { "^buff.envenom.max_stack_remains$"        , "buff.envenom.max_stack_remains"                                 },
+        { "^buff.envenom.max_stack_remains<=?(.-)$" , "0.1+buff.envenom.max_stack_remains-(%1)"                        },
         { "^!?stealthed%.(normal)$"                 , "stealthed.%1_remains"                                          },
         { "^!?stealthed%.(vanish)$"                 , "stealthed.%1_remains"                                          },
         { "^!?stealthed%.(mantle)$"                 , "stealthed.%1_remains"                                          },
@@ -519,8 +521,10 @@ do
         { "^!?time_to_hpg[<=]=?(.-)$" , "time_to_hpg-%1"       }, -- Retribution Paladin
         { "^!?consecration.up"        , "consecration.remains" }, -- Prot        Paladin
 
-        { "^!?contagion<=?(.-)"  , "contagion-%1"           }, -- Affliction Warlock
-        { "^time_to_imps%.(.+)$" , "time_to_imps[%1]"       }, -- Demo       Warlock
+        { "^!?contagion<=?(.-)"  , "contagion-%1"                 }, -- Affliction Warlock
+        { "^time_to_imps%.(.+)$" , "time_to_imps[%1]"             }, -- Demo Warlock
+        { "^!?diabolic_ritual$"  , "buff.diabolic_ritual.remains" }, -- Warlocks
+        { "^!?demonic_art$"      , "buff.demonic_art.remains"     },
 
         { "^active_bt_triggers$"       , "time_to_bt_triggers(0)"    }, -- Feral Druid w/ Bloodtalons.
         { "^active_bt_triggers<?=0$"   , "time_to_bt_triggers(0)"    }, -- Feral Druid w/ Bloodtalons.
@@ -532,6 +536,7 @@ do
 
         { "^!?fiery_brand_dot_primary_remains$", "fiery_brand_dot_primary_remains" }, -- Vengeance
         { "^!?fiery_brand_dot_primary_ticking$", "fiery_brand_dot_primary_remains" }, -- Vengeance
+
 
         { "^!?variable%.([a-z0-9_]+)$", "safenum(variable.%1)"                        },
         { "^!?variable%.([a-z0-9_]+)<=?(.-)$", "0.01+%2-safenum(variable.%1)"         },
@@ -1302,6 +1307,7 @@ local function ConvertScript( node, hasModifiers, header )
     state.scriptID = header
 
     state.this_action = node.action
+    state.this_list = header:match( "^(.-):" ) or "default"
 
     local t = node.criteria and node.criteria ~= "" and node.criteria
     local clean = SimToLua( t )
@@ -1497,7 +1503,9 @@ scripts.ConvertScript = ConvertScript
 
 function scripts:CheckScript( scriptID, action, elem )
     local prev_action = state.this_action
-    if action then state.this_action = action end
+    if action then
+        state.this_action = action
+    end
 
     local script = self.DB[ scriptID ]
 

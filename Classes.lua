@@ -53,13 +53,6 @@ local specTemplate = {
     damageRange = 0,
     damagePets = false,
 
-    throttleRefresh = false,
-    regularRefresh = 0.5,
-    combatRefresh = 0.25,
-
-    throttleTime = false,
-    maxTime = 20,
-
     -- Toggles
     custom1Name = "Custom 1",
     custom2Name = "Custom 2",
@@ -86,6 +79,8 @@ local specTemplate = {
             criteria = nil
         }
     },
+
+    placeboBar = 3,
 
     ranges = {},
     settings = {},
@@ -589,8 +584,6 @@ local HekiliSpecMixin = {
         end
     end,
 
-
-
     RegisterPotion = function( self, potion, data )
         self.potions[ potion ] = data
 
@@ -756,7 +749,7 @@ local HekiliSpecMixin = {
                     if name then
                         if not a.name or a.name == a.key then a.name = name end
                         if not a.link or a.link == a.key then a.link = link end
-                        a.texture = a.texture or texture
+                        if not a.funcs.texture then a.texture = a.texture or texture end
 
                         if a.suffix then
                             a.actualName = name
@@ -1022,16 +1015,17 @@ local HekiliSpecMixin = {
 
     RegisterPet = function( self, token, id, spell, duration, ... )
         CommitKey( token )
-
+    
+        -- Register the main pet.
         self.pets[ token ] = {
             id = type( id ) == "function" and setfenv( id, state ) or id,
             token = token,
             spell = spell,
             duration = type( duration ) == "function" and setfenv( duration, state ) or duration
         }
-
+    
+        -- Process copies.
         local n = select( "#", ... )
-
         if n and n > 0 then
             for i = 1, n do
                 local copy = select( i, ... )
@@ -1039,14 +1033,70 @@ local HekiliSpecMixin = {
             end
         end
     end,
+    
 
-    RegisterTotem = function( self, token, id )
+    RegisterPets = function( self, pets )
+        for token, data in pairs( pets ) do
+            -- Extract fields from the pet definition.
+            local id = data.id
+            local spell = data.spell
+            local duration = data.duration
+            local copy = data.copy
+    
+            -- Register the pet and handle the copy field if it exists.
+            if copy then
+                self:RegisterPet( token, id, spell, duration, copy )
+            else
+                self:RegisterPet( token, id, spell, duration )
+            end
+        end
+    end,
+
+
+    RegisterTotem = function( self, token, id, ... )
+        -- Register the primary totem.
         self.totems[ token ] = id
         self.totems[ id ] = token
-
+    
+        -- Handle copies if provided.
+        local n = select( "#", ... )
+        if n and n > 0 then
+            for i = 1, n do
+                local copy = select( i, ... )
+                self.totems[ copy ] = id
+                self.totems[ id ] = copy
+            end
+        end
+    
+        -- Commit the primary token.
         CommitKey( token )
     end,
 
+    RegisterTotems = function( self, totems )
+        for token, data in pairs( totems ) do
+            local id = data.id
+            local copy = data.copy
+    
+            -- Register the primary totem.
+            self.totems[ token ] = id
+            self.totems[ id ] = token
+    
+            -- Register any copies (aliases).
+            if copy then
+                if type( copy ) == "string" then
+                    self.totems[ copy ] = id
+                    self.totems[ id ] = copy
+                elseif type( copy ) == "table" then
+                    for _, alias in ipairs( copy ) do
+                        self.totems[ alias ] = id
+                        self.totems[ id ] = alias
+                    end
+                end
+            end
+    
+            CommitKey( token )
+        end
+    end,
 
     GetSetting = function( self, info )
         local setting = info[ #info ]
@@ -1757,7 +1807,7 @@ all:RegisterAuras( {
                     t.v3 = 0
                     t.caster = unit
 
-                    if unit == "target" and Hekili.DB.profile.filterCasts then
+                    if unit == "target" and Hekili.DB.profile.toggles.interrupts.filterCasts then
                         local filters = Hekili.DB.profile.castFilters
                         local npcid = state.target.npcid
 
@@ -2338,6 +2388,14 @@ do
         {
             name = "elemental_potion_of_power",
             items = { 191907, 191906, 191905, 191389, 191388, 191387 }
+        },
+        {
+            name = "algari_healing_potion",
+            items = { 211878, 211879, 211880 }
+        },
+        {
+            name = "cavedwellers_delight",
+            items = { 212242, 212243, 212244 }
         }
     }
 
@@ -2456,7 +2514,7 @@ do
         startsCombat = false,
         toggle = "potions",
 
-        consumable = function() return state.args.potion or settings.potion or first_potion_key or "elemental_potion_of_power" end,
+        consumable = function() return state.args.potion or settings.potion or first_potion_key or "tempered_potion" end,
         item = function()
             if state.args.potion and class.abilities[ state.args.potion ] then return class.abilities[ state.args.potion ].item end
             if spec.potion and class.abilities[ spec.potion ] then return class.abilities[ spec.potion ].item end
@@ -2846,21 +2904,23 @@ all:RegisterAbilities( {
         cooldown = function () return time > 0 and 3600 or 60 end,
         gcd = "off",
 
-        item = 5512,
+        item = function() return talent.pact_of_gluttony.enabled and 224464 or 5512 end,
+        items = { 224464, 5512 },
         bagItem = true,
 
         startsCombat = false,
-        texture = 538745,
+        texture = function() return talent.pact_of_gluttony.enabled and 538744 or 538745 end,
 
         usable = function ()
-            if GetItemCount( 5512 ) == 0 then return false, "requires healthstone in bags"
-            elseif not IsUsableItem( 5512 ) then return false, "healthstone on CD"
+            local item = talent.pact_of_gluttony.enabled and 224464 or 5512
+            if GetItemCount( item ) == 0 then return false, "requires healthstone in bags"
+            elseif not IsUsableItem( item ) then return false, "healthstone on CD"
             elseif health.current >= health.max then return false, "must be damaged" end
             return true
         end,
 
         readyTime = function ()
-            local start, duration = GetItemCooldown( 5512 )
+            local start, duration = GetItemCooldown( talent.pact_of_gluttony.enabled and 224464 or 5512 )
             return max( 0, start + duration - query_time )
         end,
 

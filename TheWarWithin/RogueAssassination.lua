@@ -8,8 +8,9 @@ local Hekili = _G[ addon ]
 local class, state = Hekili.Class, Hekili.State
 local PTR = ns.PTR
 local GetUnitChargedPowerPoints = GetUnitChargedPowerPoints
-local format, wipe, max = string.format, table.wipe, math.max
+local strformat, insert, sort, wipe, max = string.format, table.insert, table.sort, table.wipe, math.max
 local UA_GetPlayerAuraBySpellID = C_UnitAuras.GetPlayerAuraBySpellID
+
 
 local orderedPairs = ns.orderedPairs
 
@@ -19,6 +20,7 @@ spec:RegisterResource( Enum.PowerType.ComboPoints )
 
 spec:RegisterResource( Enum.PowerType.Energy, {
     garrote_vim = {
+        talent = "venomous_wounds",
         aura = "garrote",
         debuff = true,
 
@@ -32,16 +34,17 @@ spec:RegisterResource( Enum.PowerType.Energy, {
         end,
 
         stop = function ()
-            return state.debuff.poisoned.down
+            return state.debuff.poisoned.down or state.active_dot.garrote == 0
         end,
 
         interval = function ()
             return state.debuff.garrote.tick_time
         end,
 
-        value = 8
+        value = function () return state.poisoned_garrotes * 8 end
     },
     rupture_vim = {
+        talent = "venomous_wounds",
         aura = "rupture",
         debuff = true,
 
@@ -55,14 +58,14 @@ spec:RegisterResource( Enum.PowerType.Energy, {
         end,
 
         stop = function ()
-            return state.debuff.poisoned.down
+            return state.debuff.poisoned.down or state.active_dot.rupture == 0
         end,
 
         interval = function ()
             return state.debuff.rupture.tick_time
         end,
 
-        value = 8
+        value = function () return state.poisoned_ruptures * 8 end
     },
     nothing_personal = {
         aura = "nothing_personal_regen",
@@ -298,9 +301,7 @@ spec:RegisterStateTable( "stealthed", setmetatable( {}, {
 
 
 spec:RegisterStateExpr( "master_assassin_remains", function ()
-    if not ( talent.master_assassin.enabled or legendary.mark_of_the_master_assassin.enabled ) then return 0 end
-    if stealthed.mantle then return cooldown.global_cooldown.remains + ( legendary.mark_of_the_master_assassin.enabled and 4 or 3 )
-    elseif buff.master_assassin_any.up then return buff.master_assassin_any.remains end
+    if buff.master_assassin_any.up then return buff.master_assassin_any.remains end
     return 0
 end )
 
@@ -346,16 +347,6 @@ local function ApplyBleed( key, target )
     bleed.rate[ target ]         = 1
     bleed.last_tick[ target ]    = GetTime()
     bleed.haste[ target ]        = 100 + GetHaste()
-end
-
-local function UpdateBleed( key, target )
-    local bleed = tracked_bleeds[ key ]
-
-    if not bleed.rate[ target ] then
-        return
-    end
-
-    bleed.haste[ target ] = 100 + GetHaste()
 end
 
 local function UpdateBleedTick( key, target, time )
@@ -415,6 +406,11 @@ local death_events = {
     SPELL_INSTAKILL         = true,
 }
 
+local envenom1 = 0
+local envenom2 = 0
+
+local last = 0
+
 spec:RegisterCombatLogEvent( function( _, subtype, _,  sourceGUID, sourceName, _, _, destGUID, destName, destFlags, _, spellID, spellName )
     if sourceGUID == state.GUID then
         if removal_events[ subtype ] then
@@ -422,6 +418,39 @@ spec:RegisterCombatLogEvent( function( _, subtype, _,  sourceGUID, sourceName, _
                 stealth_dropped = GetTime()
                 return
             end
+        end
+
+        if spellID == 32645 and destGUID == state.GUID and application_events[ subtype ] then
+            local now = GetTime()
+
+            if now - last < 0.5 then
+                last = now
+                return
+            end
+
+            last = now
+            local buff = UA_GetPlayerAuraBySpellID( 32645 )
+
+            if not buff then
+                envenom1 = 0
+                envenom2 = 0
+                return
+            end
+
+            if not state.talent.twist_the_knife.enabled then
+                envenom1 = buff.expirationTime or 0
+                envenom2 = 0
+                return
+            end
+
+            local exp = buff.expirationTime or 0
+            envenom2 = envenom1 > now and min( envenom1, exp ) or 0
+            envenom1 = exp
+
+            --[[ print( format( "%20s - Updated Envenom at %.2f, %.2f (%.2f), [1] %.2f (%.2f), [2] %.2f (%.2f)", subtype, now, exp, exp - now,
+                envenom1, envenom1 - now,
+                envenom2, envenom2 - now ) ) ]]
+            return
         end
 
         if tracked_bleeds[ spellID ] then
@@ -495,13 +524,21 @@ spec:RegisterStateExpr( "energy_spent", function ()
 end )
 
 spec:RegisterHook( "spend", function( amt, resource )
-    if legendary.duskwalkers_patch.enabled and cooldown.vendetta.remains > 0 and resource == "energy" and amt > 0 then
-        energy_spent = energy_spent + amt
-        local reduction = floor( energy_spent / 30 )
-        energy_spent = energy_spent % 30
+    if resource == "energy" and amt > 0 then
+        if legendary.duskwalkers_patch.enabled and cooldown.vendetta.remains > 0 then
+            energy_spent = energy_spent + amt
+            local reduction = floor( energy_spent / 30 )
+            energy_spent = energy_spent % 30
 
-        if reduction > 0 then
-            reduceCooldown( "vendetta", reduction )
+            if reduction > 0 then
+                reduceCooldown( "vendetta", reduction )
+            end
+        end
+
+        if talent.thistle_tea.enabled and energy.current < 30 and cooldown.thistle_tea.charges > 0 then
+            spendCharges( "thistle_tea", 1 )
+            gain( 100, "energy" )
+            applyBuff( "thistle_tea" )
         end
     end
 
@@ -531,19 +568,19 @@ spec:RegisterHook( "spend", function( amt, resource )
     end
 end )
 
+spec:RegisterStateExpr( "poison_chance", function ()
+    return ( 0.3 + ( talent.destiny_defined.enabled and 0.05 or 0 ) + ( talent.improved_poisons.enabled and 0.05 or 0 ) ) * ( talent.dragontempered_blades.enabled and 0.7 or 1 )
+end )
 
 spec:RegisterStateExpr( "persistent_multiplier", function ()
     if not this_action then return 1 end
-    local mult = 1
-
-    if this_action == "garrote" and ( buff.improved_garrote.up or talent.improved_garrote.enabled and buff.sepsis_buff.up ) then mult = mult * 1.5 end
-
-    return mult
+    if this_action == "garrote" and buff.improved_garrote_any.up then return 1.5 end
+    return 1
 end )
 
 -- Enemies with either Deadly Poison or Wound Poison applied.
 spec:RegisterStateExpr( "poisoned_enemies", function ()
-    return ns.countUnitsWithDebuffs( "deadly_poison_dot", "wound_poison_dot", "crippling_poison_dot", "amplifying_poison_dot" )
+    return ns.countUnitsWithDebuffs( "deadly_poison_dot", "wound_poison_dot", "amplifying_poison_dot" )
 end )
 
 spec:RegisterStateExpr( "poison_remains", function ()
@@ -569,6 +606,17 @@ end )
 -- Count of bleeds on all poisoned (Deadly/Wound) targets.
 spec:RegisterStateExpr( "poisoned_bleeds", function ()
     return ns.conditionalDebuffCount( "deadly_poison_dot", "wound_poison_dot", "amplifying_poison_dot", "garrote", "internal_bleeding", "rupture" )
+end )
+
+
+-- Count of Garrotes on all poisoned (Deadly/Wound) targets.
+spec:RegisterStateExpr( "poisoned_garrotes", function ()
+    return ns.conditionalDebuffCount( "deadly_poison_dot", "wound_poison_dot", "amplifying_poison_dot", "garrote" )
+end )
+
+-- Count of Ruptures on all poisoned (Deadly/Wound) targets.
+spec:RegisterStateExpr( "poisoned_ruptures", function ()
+    return ns.conditionalDebuffCount( "deadly_poison_dot", "wound_poison_dot", "amplifying_poison_dot", "rupture" )
 end )
 
 
@@ -620,6 +668,19 @@ spec:RegisterStateExpr( "improved_garrote_remains", function()
         return buff.improved_garrote_any.remains
     end
     return 0
+end )
+
+
+local first_envenom = 0
+local second_envenom = 0
+
+spec:RegisterStateExpr( "envenom_stacks", function ()
+    return ( first_envenom > query_time and 1 or 0 ) + ( second_envenom > query_time and 1 or 0 )
+end )
+
+spec:RegisterStateExpr( "envenom_2_remains", function ()
+    if not talent.twist_the_knife.enabled then return buff.envenom.remains end
+    return max( 0, second_envenom - query_time )
 end )
 
 spec:RegisterStateExpr( "priority_rotation", function ()
@@ -715,6 +776,15 @@ spec:RegisterHook( "reset_precast", function ()
     if talent.master_assassin.enabled and buff.stealth.up then
         applyBuff( "master_assassin_aura", 3600 )
         removeBuff( "master_assasin" )
+    end
+
+    -- Tracking Envenom buff stacks.
+    first_envenom = min( buff.envenom.expires, envenom1 )
+    second_envenom = envenom2
+
+    if Hekili.ActiveDebug then
+        if talent.twist_the_knife.enabled then Hekili:Debug( "Envenoms:  [1] = %.2f, [2] = %.2f", max( 0, first_envenom - query_time ), max( second_envenom - query_time, 0 ) ) end
+        Hekili:Debug( "Energy Cap in %.2f -- Enemies: %d, Bleeds: %d, P. Bleeds: %d, P. Garrotes: %d, P. Ruptures: %d", energy.time_to_max, active_enemies, bleeds, poisoned_bleeds, poisoned_garrotes, poisoned_ruptures )
     end
 end )
 
@@ -1031,6 +1101,16 @@ spec:RegisterAuras( {
         tick_time = 5,
         type = "Poison",
         max_stack = function () return 1 + ( talent.twist_the_knife.enabled and 1 or 0 ) end,
+        meta = {
+            stack = function( t, type ) if type == "buff" then return state.envenom_stacks end end,
+            stacks = function( t, type ) if type == "buff" then return state.envenom_stacks end end,
+            max_stack_remains = function( t, type )
+                if type == "buff" then
+                    if state.talent.twist_the_knife.enabled then return state.envenom_2_remains end
+                    return state.buff.envenom.remains
+                end
+            end,
+        }
     },
     -- Talent: Dodge chance increased by ${$w1/2}%.$?a344363[ Dodging an attack while Evasion is active will trigger Mastery: Main Gauche.][]
     -- https://wowhead.com/beta/spell=5277
@@ -1707,8 +1787,7 @@ spec:RegisterAbilities( {
         usable = function () return stealthed.ambush or buff.audacity.up or buff.blindside.up, "requires stealth or audacity/blindside/sepsis_buff" end,
 
         cp_gain = function ()
-            if buff.shadow_blades.up then return 6 end
-            return 2 + ( buff.shadow_blades.up and 1 or 0 ) + ( buff.broadside.up and 1 or 0 ) + talent.improved_ambush.rank + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 )
+            return 2 + ( buff.broadside.up and 1 or 0 ) + talent.improved_ambush.rank + ( talent.seal_fate.enabled and buff.cold_blood.up and not talent.inevitable_end.enabled and 1 or 0 )
         end,
 
         handler = function ()
@@ -1717,7 +1796,7 @@ spec:RegisterAbilities( {
             if buff.blindside.up then removeBuff( "blindside" ) end
             if covenant.night_fae and buff.sepsis_buff.up then removeBuff( "sepsis_buff" ) end
             if buff.audacity.up then removeBuff( "audacity" ) end
-            if buff.deathstalkers_mark_buff.up then removeStack( "deathstalkers_mark_buff" ) end
+            if buff.deathstalkers_mark_buff.up then removeBuff( "deathstalkers_mark_buff" ) end
 
             if stealthed.ambush and talent.deathstalkers_mark.enabled then
                 applyDebuff( "target", "deathstalkers_mark", nil, 3 )
@@ -2048,6 +2127,7 @@ spec:RegisterAbilities( {
             if buff.darkest_night.up and combo_points.deficit == 0 then
                 removeBuff( "darkest_night" )
                 applyDebuff( "target", "deathstalkers_mark", nil, 3 )
+                if talent.clear_the_witnesses.enabled then applyBuff( "clear_the_witnesses" ) end
             end
 
             if pvptalent.system_shock.enabled then
@@ -2064,8 +2144,13 @@ spec:RegisterAbilities( {
                 buff.slice_and_dice.expires = buff.slice_and_dice.expires + combo_points.current * 3
             else applyBuff( "slice_and_dice", combo_points.current * 3 ) end
 
-            -- TODO: Manage async stacks
-            addStack( "envenom" )
+            local app_duration = spec.auras.envenom.duration + min( 0.3 * spec.auras.envenom.duration, buff.envenom.remains )
+            second_envenom = first_envenom
+            first_envenom = query_time + app_duration
+
+            addStack( "envenom" ) -- Buff.
+            applyDebuff( "target", "envenom" ) -- Debuff.
+
             spend( combo_points.current, "combo_points" )
             removeStack( "supercharged_combo_points" )
         end,
@@ -2096,24 +2181,40 @@ spec:RegisterAbilities( {
         cooldown = 0,
         gcd = "totem",
         school = "physical",
-
         spend = 35,
         spendType = "energy",
 
         startsCombat = true,
         cycle = function () return buff.deadly_poison.up and "deadly_poison_dot" or buff.amplifying_poison.up and "amplifying_poison_dot" or nil end,
 
+        cp_gain = function()
+            local fanCP = buff.clear_the_witnesses.up and 2 or 1
+
+            -- Predict crit gains
+            if talent.seal_fate.enabled and settings.fok_critical_cp_prediction ~= "do_not_predict" then
+                -- calculate the crit chance of Fan of Knives then estimate 
+                fanCP = fanCP + max(0, floor( true_active_enemies * ( 0.01 * ( crit_pct_current + ( talent.deadly_precision.enabled and 5 or 0 ) + ( talent.thrown_precision.enabled and 5 or 0 ) + ( buff.momentum_of_despair.up and 10 or 0 ) + ( buff.master_assassin_any.up and 20 or 0 ) ) ) ) - ( settings.fok_critical_cp_prediction == "predict_conservatively" and 1 or 0 ) )
+
+            end
+
+            return fanCP
+        end,
+
         handler = function ()
-            gain( buff.clear_the_witnesses.up and 2 or 1, "combo_points" )
+            gain( action.fan_of_knives.cp_gain, "combo_points" )
             removeBuff( "hidden_blades" )
             removeBuff( "clear_the_witnesses" )
 
+            -- This is a rough estimation for AoE poison applications. If required, can be iterated on in the future if it needs to be referenced in an APL
+            local newDeadlyPoisons = floor( poison_chance * max( 0, true_active_enemies - active_dot.deadly_poison_dot ) )
+
             if buff.deadly_poison.up then
                 applyDebuff( "target", "deadly_poison_dot" )
-                active_dot.deadly_poison_dot = min( active_enemies, active_dot.deadly_poison_dot + 8 )
-            elseif buff.amplifying_poison.up then
+                active_dot.deadly_poison_dot = min( active_enemies, active_dot.deadly_poison_dot + newDeadlyPoisons )
+            end
+            if buff.amplifying_poison.up then
                 applyDebuff( "target", "amplifying_poison_dot" )
-                active_dot.amplifying_poison_dot = min( active_enemies, active_dot.amplifying_poison_dot + 8 )
+                active_dot.amplifying_poison_dot = min( active_enemies, active_dot.amplifying_poison_dot + newDeadlyPoisons )
             end
         end,
     },
@@ -2123,8 +2224,8 @@ spec:RegisterAbilities( {
         id = 1966,
         cast = 0,
         cooldown = function() return 15 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) end,
-        charges = function() return talent.graceful_guile.enabled and 2 or nil end,
-        recharge = function() return talent.graceful_guile.enabled and ( 15 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) ) or nil end,
+        charges = function() if talent.graceful_guile.enabled then return 2 end end,
+        recharge = function() if talent.graceful_guile.enabled then return ( 15 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) ) end end,
         gcd = "off",
         school = "physical",
 
@@ -2143,7 +2244,7 @@ spec:RegisterAbilities( {
     garrote = {
         id = 703,
         cast = 0,
-        cooldown = function () return ( buff.sepsis_buff.up or buff.improved_garrote.up ) and 0 or 6 end,
+        cooldown = function () return buff.improved_garrote_any.up and 0 or 6 end,
         gcd = "totem",
         school = "physical",
 
@@ -2154,6 +2255,13 @@ spec:RegisterAbilities( {
         aura = "garrote",
         cycle = "garrote",
 
+        usable = function ()
+            if not debuff.garrote.refreshable and settings.max_garrote_spread > 0 and buff.indiscriminate_carnage_any.up then
+                return ( active_dot.garrote < settings.max_garrote_spread ), strformat( "Active Garrotes [%d] >= Max Garrote Setting [%d]", active_dot.garrote, settings.max_garrote_spread )
+            end
+            return true
+        end,
+
         cp_gain = function() return ( stealthed.rogue or stealthed.improved_garrote ) and talent.shrouded_suffocation.enabled and 3 or 1 end,
 
         handler = function ()
@@ -2162,7 +2270,7 @@ spec:RegisterAbilities( {
 
             if debuff.deathmark.up then
                 applyDebuff( "target", "garrote_deathmark" )
-                debuff.garrote_deathmark.pmultiplier = persistent_multiplier * ( buff.improved_garrote.up and 1.5 or 1 )
+                debuff.garrote_deathmark.pmultiplier = persistent_multiplier
             end
 
             if buff.indiscriminate_carnage_any.up then
@@ -2269,7 +2377,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             applyDebuff( "target", "kidney_shot", 1 + combo_points.current )
-            if talent.alacrity.enabled and combo_points.current > 4 then addStack( "alacrity" ) end
+            if talent.alacrity.rank > 1 and effective_combo_points > 9 then addStack( "alacrity" ) end
             if talent.internal_bleeding.enabled then
                 applyDebuff( "target", "internal_bleeding" )
                 debuff.internal_bleeding.pmultiplier = persistent_multiplier
@@ -2524,13 +2632,9 @@ spec:RegisterAbilities( {
     shadowstep = {
         id = 36554,
         cast = 0,
-        charges = function()
-            if talent.shadowstep.enabled and talent.shadowstep_2.enabled then return 2 end
-        end,
+        charges = function() if talent.shadowstep.enabled and talent.shadowstep_2.enabled then return 2 end end,
         cooldown = function() return 30 * ( 1 - 0.333 * talent.intent_to_kill.rank ) end,
-        recharge = function()
-            if talent.shadowstep.enabled and talent.shadowstep_2.enabled then return 30 * ( 1 - 0.333 * talent.intent_to_kill.rank ) end
-        end,
+        recharge = function() if talent.shadowstep.enabled and talent.shadowstep_2.enabled then return 30 * ( 1 - 0.333 * talent.intent_to_kill.rank ) end end,
         gcd = "off",
 
         talent = "shadowstep",
@@ -2547,13 +2651,9 @@ spec:RegisterAbilities( {
     shiv = {
         id = 5938,
         cast = 0,
-        charges = function()
-            if talent.lightweight_shiv.enabled then return 2 end
-        end,
+        charges = function() if talent.lightweight_shiv.enabled then return 2 end end,
         cooldown = 25,
-        recharge = function()
-            if talent.lightweight_shiv.enabled then return 25 end
-        end,
+        recharge = function() if talent.lightweight_shiv.enabled then return 25 end end,
         gcd = "totem",
         school = "physical",
 
@@ -2612,9 +2712,7 @@ spec:RegisterAbilities( {
 
         handler = function ()
             removeStack( "goremaws_bite" )
-            if talent.alacrity.enabled and combo_points.current > 4 then
-                addStack( "alacrity" )
-            end
+            if talent.alacrity.rank > 1 and effective_combo_points > 9 then addStack( "alacrity" ) end
             applyBuff( "slice_and_dice" )
             spend( combo_points.current, "combo_points" )
 
@@ -2664,7 +2762,9 @@ spec:RegisterAbilities( {
 
             if talent.crackshot.enabled then setCooldown( "between_the_eyes", 0 ) end
 
-            if talent.improved_garrote.enabled then applyBuff( "improved_garrote" ) end
+            if talent.improved_garrote.enabled then applyBuff( "improved_garrote_aura" ) end
+            if talent.indiscriminate_carnage.enabled then applyBuff( "indiscriminate_carnage_aura" ) end
+            if talent.master_assassin.enabled then applyBuff( "master_assassin_aura" ) end
             if talent.premeditation.enabled then applyBuff( "premeditation" ) end
             if talent.silent_storm.enabled then applyBuff( "silent_storm" ) end
             if talent.take_em_by_surprise.enabled and buff.take_em_by_surprise.down then
@@ -2724,13 +2824,9 @@ spec:RegisterAbilities( {
     vanish = {
         id = 1856,
         cast = 0,
-        charges = function()
-            if talent.without_a_trace.enabled then return 2 end
-        end,
+        charges = function() if talent.without_a_trace.enabled then return 2 end end,
         cooldown = function() return 120 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) end,
-        recharge = function()
-            if talent.without_a_trace.enabled then return 120 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) end
-        end,
+        recharge = function() if talent.without_a_trace.enabled then return 120 * ( pvptalent.thiefs_bargain.enabled and 0.667 or 1 ) end end,
         gcd = "off",
 
         startsCombat = false,
@@ -2742,6 +2838,14 @@ spec:RegisterAbilities( {
         end,
 
         toggle = "cooldowns",
+
+        readyTime = function ()
+            local reserved = settings.vanish_charges_reserved or 0
+            if reserved > 0 then
+                local cd = cooldown.vanish
+                return ( 1 + reserved - cd.charges_fractional ) * cd.recharge
+            end
+        end,
 
         handler = function ()
             applyBuff( "vanish" )
@@ -2854,7 +2958,7 @@ spec:RegisterOptions( {
     damage = true,
     damageExpiration = 6,
 
-    potion = "phantom_fire",
+    potion = "tempered_potion",
 
     package = "Assassination",
 } )
@@ -2882,9 +2986,29 @@ spec:RegisterStateExpr( "envenom_at_5cp", function ()
     return settings.envenom_pool_5_points and 1 or 0
 end )--]]
 
+spec:RegisterSetting( "fok_critical_cp_prediction", "predict", {
+    name = strformat( "%s Critical Combo Point Prediction", Hekili:GetSpellLinkWithTexture( 51723 ) ),  -- Fan of Knives
+    desc = strformat( "%sThis setting controls how %s predicts critical strikes for combo point generation.%s " ..
+                      "|n|n%sThis option only works if the %s talent is selected.%s\n\n" ..
+                      "|cFF00FF00• Predict:|r Assumes a certain number of critical hits will occur based on your current critical strike chance and number of nearby enemies.\n\n" ..
+                      "|cFF00FF00• Predict Conservatively:|r The predicted number of combo points is reduced by 1 in order to prevent more jarring rotation changes from unlucky critical strikes.\n\n" ..
+                      "|cFF00FF00• Do Not Predict:|r Disables critical prediction, using only guaranteed combo points from casting %s.",
+                      "|cFFFFD100", Hekili:GetSpellLinkWithTexture( 51723 ), "|r",
+                      "|cFFFF0000", Hekili:GetSpellLinkWithTexture( 14190 ), "|r",
+                      Hekili:GetSpellLinkWithTexture( 51723 )
+    ),
+    type = "select",
+    values = {
+        ["predict"] = "Predict",
+        ["predict_conservatively"] = "Predict Conservatively",
+        ["do_not_predict"] = "Do Not Predict"
+    },
+    width = 1.5,
+} )
+
 spec:RegisterSetting( "envenom_pool_pct", 0, {
-    name = "Energy % for |T132287:0|t Envenom",
-    desc = "If set above 0, |T132287:0|t Envenom will ONLY be used when you have at least this percentage of your Energy.",
+    name = strformat( "Minimum Energy %% for %s", Hekili:GetSpellLinkWithTexture( 32645 ) ),
+    desc = strformat( "If set above 0, %s will ONLY be used when you have at least this percentage of your Energy.", Hekili:GetSpellLinkWithTexture( 32645 ) ),
     type = "range",
     min = 0,
     max = 100,
@@ -2896,37 +3020,49 @@ spec:RegisterStateExpr( "envenom_pool_deficit", function ()
     return energy.max * ( ( 100 - ( settings.envenom_pool_pct or 100 ) ) / 100 )
 end )
 
-spec:RegisterSetting( "dot_threshold", 7, {
-    name = "Remaining Time DoT Threshold",
-    desc = "If set above 0, the DoT priority will not be used if your enemy or enemies will not survive longer than the specified time.",
+-- Not currently used, but could be investigated as per review comments on PR #4133
+--[[spec:RegisterSetting( "dot_threshold", 7, {
+    name = "Remaining Time |cff4ec9b0DoT|r Threshold",
+    desc = "If set above 0, the |cff4ec9b0DoT|r priority will not be used if your enemy or enemies will not survive longer than the specified time.",
     type = "range",
     min = 0,
     max = 10,
     step = 0.1,
-    width = "full"
-} )
+    width = 1.5
+} )--]]
 
-spec:RegisterSetting( "mfd_points", 3, {
-    name = "|T236340:0|t Marked for Death Combo Points",
-    desc = "The addon will only recommend |T236364:0|t Marked for Death when you have the specified number of combo points or fewer.",
+--[[spec:RegisterSetting( "mfd_points", 3, {
+    name = "|T236340:0|t |cff4ec9b0Marked for Death|r Combo Points",
+    desc = "The addon will only recommend |T236364:0|t |cff4ec9b0Marked for Death|r when you have the specified number of combo points or fewer.",
     type = "range",
     min = 0,
     max = 5,
     step = 1,
     width = "full"
+} )--]]
+
+spec:RegisterSetting( "vanish_charges_reserved", 0, {
+    name = strformat( "Reserve %s Charges", Hekili:GetSpellLinkWithTexture( 1856 ) ),
+    desc = strformat( "If set above zero, %s will not be recommended if it would leave you with fewer than this number of (fractional) charges.", Hekili:GetSpellLinkWithTexture( 1856 ) ),
+    type = "range",
+    min = 0,
+    max = 2,
+    step = 0.1,
+    width = 1.5
 } )
 
 spec:RegisterSetting( "solo_vanish", true, {
-    name = "Allow |T132331:0|t Vanish when Solo",
-    desc = "If unchecked, the addon will not recommend |T132331:0|t Vanish when you are alone (to avoid resetting combat).",
+    name = strformat( "Allow %s When Solo", Hekili:GetSpellLinkWithTexture( 1856 ) ),  -- Vanish
+    desc = strformat( "If enabled, %s can be recommended even when you are alone, |cFFFF0000which may reset combat|r.", Hekili:GetSpellLinkWithTexture( 1856 ) ),
     type = "toggle",
     width = "full"
 } )
 
 spec:RegisterSetting( "allow_shadowmeld", nil, {
-    name = "Allow |T132089:0|t Shadowmeld",
-    desc = "If checked, |T132089:0|t Shadowmeld can be recommended for Night Elves when its conditions are met.  Your stealth-based abilities can be used in Shadowmeld, even if your action bar does not change.  " ..
-        "Shadowmeld can only be recommended in boss fights or when you are in a group (to avoid resetting combat).",
+    name = strformat( "Allow %s", Hekili:GetSpellLinkWithTexture( 58984 ) ),  -- Shadowmeld
+    desc = strformat( "If checked, %s can be recommended for Night Elves when its conditions are met.  Your stealth-based abilities can be used in Shadowmeld, even if your action bar does not change. " ..
+                      "%s can only be recommended in boss fights or when you are in a group (to avoid resetting combat).",
+                      Hekili:GetSpellLinkWithTexture( 58984 ), Hekili:GetSpellLinkWithTexture( 58984 ) ),
     type = "toggle",
     width = "full",
     get = function () return not Hekili.DB.profile.specs[ 259 ].abilities.shadowmeld.disabled end,
@@ -2935,5 +3071,20 @@ spec:RegisterSetting( "allow_shadowmeld", nil, {
     end,
 } )
 
+spec:RegisterSetting( "max_garrote_spread", 10, {
+    name = strformat( "Maximum %s DoTs During %s", Hekili:GetSpellLinkWithTexture( 703 ), Hekili:GetSpellLinkWithTexture( 381802 ) ),
+    desc = strformat( "This setting controls the maximum number of %s the priority will guide you to apply while the %s buff is active." ..
+                      "|n|n|cFFFFD100Set to 0 for no limit.|r\n\n" ..
+                      "|cFF00FF00Maximum:|r This number will be used as the maximum number of %s, and can go as high as 20.",
+                      Hekili:GetSpellLinkWithTexture( 703 ), Hekili:GetSpellLinkWithTexture( 381802 ),
+                      Hekili:GetSpellLinkWithTexture( 703 )
+    ),
+    type = "range",
+    min = 0,
+    max = 20,
+    step = 1,
+    width = "full"
+} )
 
-spec:RegisterPack( "Assassination", 20241030, [[Hekili:v3ZAZTTrs(BrvQIH0wsMKsYpYjQuETt2lzV8OI8T5BceceueNib4IhswBPI)2VUNxyMb9maKIYoBLylzIb9m9JPFpdVA0vF6QlNfwgF1VoE44thn8KHhp6SZE343D1LLpSo(QlxhgDB4nWVKgUc(73xuewuKKgwMKLIp9HLzHZqOuKvLhbJyrz56IV7vV6MKYfvxFCu2QxvKSQAj7nIYdNxI)7OxD1LxxLSS8NsV6AZLW43C8ORUmSQCrw(vxEzYQpaanz2Sy(iJlIU6sCKhnA4rJFZ3Tz6VewugNVzQCTTzAuwEECeoHB(5n)SAWJoCZu8NNbVec3ntRwJZSAqdF3rJFl8WFmdqLntxNLTmj9MntNNbG)hsVlonB1MP3dywwv5MPFmm)24c4x(1KBwa)izU2Osk2mDw29Pga)ua4F6(4WBPao8wAJDKVv5OrWd)J47skGL58KLlJ1wGAJB4zakJ)8TIF(oNa9ThngF47xUm7EpW8TCKqhg)xBMMhVm8ZBMgNgNFZd4)8M4u8h)RQK84vXPLfgqy83Hqo86LWQFvwo83V)3(b9rmcNJFmbazre82bfHLv5mjOntVlmpH9QAJF47ySw4L(FzljG2pph5cS1PAGVHlW8PfWm(NHa69NaRmbKJxMuuwWKIlJdxwUigfP)v2UJy26C2v)TRUe4ubPXFUeFYLHrITaaFmipwk(JYN5jR5p7sj0aeKn8IRGxESfyHXdYVjHxD5bGit81vZNF8S4WYffLHlVnoViyfiODC16nt7Tzk8zafHAacqYgv)ntXf4DXbZYOg8MPtabIntF8Xnt5tixwoiffLpMj4oDqnwgU66QIfwO37xVEjWT)Oo0XTJi4X9cjWEIfHiVieKMaaMnFosaoXjbqGC3cBmkUomn2aNqmP(jLjr3Y2)0tr0kwKC3XG8wyskmPNdseSNYEwmxqgOI1ifoElu6xcVfKnkQqzYYmC5Fh8BG(N7qPDyMQYzt6)qUoa6mmxH4oM0WLGQNfXr3Ii5PorY45ZJ58gq541zbRZsWnitVysTW9X1dQyDC6SGO1TqdmWYAIaaZtKse(LTuIcrzlNfC9YSSzSpxtkqaElAMsLhsWW5TmevcxI7Yqawt1US6AGgmVcSNauOZEwOqmuyfZKqqOWIqqiO9qUbsSVa0vTkbvumrkN8fGcjjennzH)b(LBqvILH53exIKOxBrIKttE1AqHiOUj6HOLXb8xOGPxApsftsNLGyXk0EpaLW8uWvajDSpQGFoO5BbxrosDafyfXLLOa6XSLgqCKd(aTzLzGqQvh3ElEz1aAQ2xmcCdGa7Rf)hi0mIub4txbuKSGzjWSFbWCpZIB8h8xVMB8tg45MPFGJOid4noya3eMNNv2cdqzm54KvRZZUlEwG49QjGAkRgZrY1GZsLjRxMGciNZLoXpVFN4kAA9vZfaC(YujZZGNJHAV)ONl26ajH3(nUqUJIIJCKgwddCSfZ5NeuQnt)781e6tc3od6N0FWL44oHXjiAJT4qCXeLvLww7ALhU7BDQbQDwNl2efl1jbQvLvUhG(8CIKtOVrh0InpjcTbFbF19sGAVz6luUquSipRAgGzfWKKfX2Njn42ush1hD5DHPjGBae(gTfUdbSayqOlgWQh)V)jdQG5HhsJKmnBXajhN5SbQrgM9pxMhgeUcz3xD5PNz6GwBoAXOSZbjIRH3FwWYQOBFauuMKkj9pf1N9BaFeYGAIKLfhdgwIULdNZ0mQyn2fXHZShRMHgbNWKaljKOH45SFJrm)raYZRwI(Cpd2x43fSduYhwIDg(IvpkhQJ0hSCKw7KmgtKqKqQksZkJMcQJDTRtFmgwLgqzA3WIUAMRFK(ERtBFVfaDG7VCP0maWktdYMhCBkiyGsmFphmBb3RyDoW)1K(L2QuY)AXH6rdNTxODjeMg7R86Rw3Kx(pjHf)8sMsu(C1bZBJe7WZdtMfeFhIzHZG91O7EiOg2DXc2wzW2B4DmbbPjpPIrpcb2ErsX88sV7ad2Y1mdYApBsEn9HhBc5EtJTTSq7K7yBmC79RDLIcHLEnt)kJ2A7uoL)Fncv9ROC6(qPMd5YtgUBKqcZ2ekUWCdKck5GzeKEdz7RcrhYJ)8AWAkqPzoBeLLZ8oLYDJA(GxxEC7QMa9Tet7Yo6XerbyqB(alJwZcxbB)aVwVdNveIasEDYYKsMlGvfivcO85pC)Iy8f(fvKZ)DLlxECH5j6EYELM0Njr9sHsrE(PcHTSP3euGEJplpEz9gJxW9Lr(cUdkeg4R1cZGhdjr2QKc9IPokSQacneq5WsGy1qnfFpJ9OScKxfHTv6HK8ivqKvPlJlkq(TizWPIKbJm51CjzwIMiKIZwdpdI0xBVgNwG)2YQy9mcQ0aAPn1ipyndo22fCwMSIYaJf4huWMYaEU9Xziq9ikPV2xVEtGNvI4yFwDe)MZU96sbrZvyRPsmmN9VxgaoufLuOfIJVPVd(bmHjZli6OD3ImWb)4vRbHGAIVNunYzfm1MHzQ4BEVy9Uz6VlxW(ZMyTj8LOG39X4FhWKwCJOeutDdtoYYQXt0nN8wJ0Zq)2klseGajMmxH02Nl3mBrzv4evC1MMoDWum2M7KVefwWQIaYEuj71VNWFjydg22Pygcn5wyOxNaF67uiCdXlj(hvEnuOTjqj5lDzqbp)EIvlSqR2P(5pbu8RSqznft68eODkIrTesQHysY8NuRRZk45ZBot40qOjAbQNRGz09TExkFSA1AzjrqIZCU9oW9cUXUvqyibrZk872gtGHLc9LGDyqagMrrYqCTkr3sDeaGU826m(pnnCdlkqBoiAKvvyKaQFpZL1U6fR35JHebZRYFOHpY5jSztXQYdXFwWdX)AqNFXdPrOCdx3VCJDHFlB(xnX5fX53ksZJBZgEbY8K8ygA5xHNXEch1SZrKD2o1mqLJ7DdC7Mrl9cCcmIIYCq3qeSvJljdMLDf)r7Ec9C4FULa2)D8Y14J)NYkIZKRyvGeeVclsIyLLecudhfTtFa(fihJFN)Q57gogjSEBQaLgQ7A4fVUMmBP(0oYl(t3m9t8hZvqngIZ4tYflQ(8(yzHDbprRUzHvJlqT7RreF(Q7ZEnKuVLnRB0Vr2fzrfCE16BJJxJvnzzrglO0cEz7XqCEF2pWLOqLZAeP6QYrPIPrau(Ou7IatFFoA6SeTAVQxYzTgiEjibx(5qjpmL31eJnc2KCuNRZQBRODCG1ot8mZIU1HxbM8388hwURyYDv11DsMdDqKrQXMibMqKyBljABOQPK4xl5oVsC(l7D340JExlSIgBc9grGnQVJk0mlh6emlyr3gWtfwVoeF9jA7BDbNxiT9SvqRns6agvLhFVD1xvdcG5W2YfOstROlHuUcEdkzhwIY1SOFyDlZYq0M1h(D05W5SSigQBbNnW4zywfrN(rJyPZwYD1dmfcCVvKED3UZkKDvrVwtJ8464AQhG5EcpHCm22S0LsIZhyy3NGOaVffx1Cxb8Qb4y8h43DfLJDaTRaLfakCq8k0)4SQLxDjO3b(05b3enJzuIdFxJ2WP3T3BtC)WiLxUTqu84(r4sqSfIulyD1)(FdBOVo7ZoXeQHsOb0nf1LL9sMU54Ci2g4fdtlwLGzq11cX5W3QfJTYDoSxfol4FvfhNIDPvkRlIvltQNP7JMBjBM2IHsnQ7O09juQyLRTeW90C01FqTcOYFge9XdbqCBvRCrf99gBfH0vhnT)eTEAktAFZHDcoQLlzO7iNPoHR0KPfTQGTQkkdbfULkfnflZWFudjJ99kQRKWIHVhGVJ7Ui0S5b9HBd1JcULPASMhjIrCC54JvuyS5bEGqJKH07bUJN27Ud(A1nShOqKd8JidqU57S4MMSGXnyVJ3oMY4VCmLrumLr)NitHfx98qWJok3jmDRpUq2vxyO1RbIzcZTX(yskVRAj6Md7dujeLFcnwDDyPEop5qHYsUz)bMcSEu7cp2EjnHh0qi)WluKSAfdPtWbZNHczs2afxAEcDBcVBTTn42Ult8iteE0JOtsk6qpvdN(b1t)br4m)b)asKghpd)ywh)ickaOCF63(4V9DabRa8pL9jGN3fzaaGalG3OaDpenHoq3ZiRqlOmG3os1Vf)OFH)4E5oJpG3XtJhArgyX29r)Lf)d8KxD)cMEz0N4vHFozvfEuoQd)7Vjc)dBoUcEPwJQYZHNV8bJkhYwK1jzdGva)LOCPODYdpNLMyUwh6zfgh58Ass(ZyrNpiqUlRJm8(fStmrvUaprz9QurHLxKuY7WvDsutm3m(yBNrAhF7717hpAXCNExQAaB8znkLf)vfB3whv3ZDNoKLRc0tTA5smKiK5GDtzDUnoIN)K6HDhecl6qkBolQhyx8q3wUwiZkZSyXciIHz887lCZGXf5yGotknRmqCmWO8mRD(Z(G5OVGsqnzA1GW2tR2xrBj7vFYJwMSoqE(jiCmO9j)ndzCAtbIIW0BQaTVW21qGTzktm0JmbQstF9vTg8apyzce(sGGxcRYrd36LPmNwxOeHpt8JTy1eExwYSaWOjBrS9r87TiYSe8XJ(HCCGFmgCUzbfzCDmJ2(wgrP1ux6RPRkIjHTUuFOIkulOr3AqBjKQhRMqPPIO4CUkBdf)nLr4VKd1iovfmYD1)Qpzc5z3ufZHVVJRa(CN5W6cwoSka)aJkn6jySkyb8)raE6i5NrsP1f1PKeFjx5jWliWceJVSRK26)LLDgicb3PXmmQ5XUy7rwzvaXxXvWZEbWSe8WiZEF31MxiwzMC1ZyQfi90ulW98iSdskZyoaXMgMQtRNVUAzrS(KJEApuFGSgxPi4)RA2n4r21ESJ0h71H3WYsgqkrNA0hj8Iy7vWCWxf(GAXGDPqa3Fw7jyR1CuMDZnWMU5vPPXl13nTopjdOSpea7auU)SvU4lHuJaK05zAb5TiSa9WR84W0hcMTUGo(8MJIv8hIyfNPkaakiqfIF9iuLHrByjfhJH7eNFnOoSi4AW8bwofRPJCu0E3C)IeeaIxg04GHPRoFSS0O8prUsHI7mA3cbzmjfMI2rfSDluys63fTXcAsGDq6AmBoiW(KV2PatIwZJXaBIaMNnqyyN)9wEuq5ASDV9edeEi25yrnFyHEIw54fHqRjc0rIMDXav4ggt0VNhFueRAhGAh8Uwiex4FK9R65rGmbbU0cxGGkaXYzj4bzXDbToOTYYQPdlOigX6cUeDPsFE3peCnSiHoNRCQGxgjZdDJqLpWtFr)HhF6lhE8jVGIlIEfEeELD8c3Eno4i(Ys5cEugAGARpRCnDSQNzLb7CVTOgIMxpgHMeUA9YK5paFSWuHEu2JfnbgL1D7AsZp7cg92e9j0(JmEAD6jEFDkjW)tDaUr9COnSKiUSeIu8oYRuDLECiMPzWrWz8uuvJmYe5iZCXHIbW(tYQqEp4ndRa4H8sEJPkd8)4yk7xrM9shj7XxtiPRZOnYJQYCkcHS0JI8PBEvOSBA(DuLzgB9iVE37wGI2fWTm8DwryX7dfJWblIdeF6oPYUdhwbxfsPFBNJbTTs2p2mge5(fFK(EDIkwFYi(aFgbn78P0MOjxr1ep3EWxhyvZxurAxvvMSmSK886VLGsCnNqK6dhasEp5W150WVtj7QlnNWr69PZQm0f8Qv44a686WKCQtKx5ICWvfQ2zwMilMmWYyGdGv0gCgjnUOiUqQG4G2Ziwn1XyD3OkBP8CZ(peyfQP8KxkB1cYtMpsjzniBDpnuqL5hs7NZIdNPcLa)ewEl8sOvBDi4tYCM14y1iFGJlDcxsdFf447iJIv4e(nSaNywiU9Es5uBPrQhK8syvZ6xF8tUglibpt0YoSKxMfjjEZujnEGqM4tKPnR99xYKhFnODFwrYS6UNRrkr072V2teADgu5vssTVXCMA92qI9HCQ1Ft(MVQ(kV5yWkzMWtHkSq0YxGFtvPkJgXvmupTJp5XKj8RHUWU12LBJq7KMxwhFk86J(fXmAii9r2MtS565(7Gm(XkzeYef6D1rHGokYF96PV6aYFDECiNTR8Fr4LGOANooUcTBfVw)PZdhTdnlnQrO2vIXFgMiQVP2PMLPY062W4xEViYjrtFBDCL0S8QeYbN(EQhYpVn9pIUTDcLgtVYuJ2)z8RtlWg6eK5h2mirJkOFMxVUOkTHNQ1RKIPP8UgdfnWogDLiH8yKWpmXQ4qu4(HANtv(5r9qH8cSDbeWkzTviNxQFabefLSa0BxmpbZsaf7YBZIzSK)FlcVrDA6uw9f9c5rrgD7NybkwBFimTeaJWKuDKxx1TuVYBjsc)ZJiBHecCty7Tz7IYsq7WoxXq5YT(mTzT)NLmeRdjpR6UsJU3NG8SIQ87ygLxMHYL8dWqRPB5dAQhEVw4RIl2Uc2n8PBkAuZ2MtCx7XQeKELbeN2q3(H3Vz1Hnuz04s871s75uBa73sBXmHxCnPoyIIL2b(h2qhsIJA)P)GeKjGOCbqBq7WXHAlzY7RqXjkM5qtBopko5XUaZRBhNuun9vO(Ha81gE8OnkB3EWcNX7Ndzwp4zV6qHBoClv4IuKuJzSdqOAUuD6bl3LONPHIvmvSaMzrKD29E1FWpwDV6346mWdGO(HPRBQkuhBr)ENAyAHPfTxNBrCVZV4A2GY5oJnpmwU37vk2f7zp6rAERsXg5aQUcOtBUQ3Bv7rqsA8DjLyh9G5lyMrim78rIBqZorvrtvN3IgouHzXr0Pq87yxwuM8Elx7c9TO2LBH2l(vDwCo7W3BCReFFyEkQaaC9fLytwTolVua(Vvjx8TQR(wSjLYyT4uvz2kEJ9ac(PGG)XB(5)hwI2Xld3pKbRLC2J)w5j1bj4g3bLFl3GV7bij2Wa7p6ZduZWj0ZGsvMfGB4uNn8Eln8OUp5SaTVRCU6zzZptqD57p2osRde3A7Q1A0HJ8DKOsxrbRPW)1GvxNjRk9BphoUyISH(zpJ0ihW(zGg5AM2p0Ox)1a67foWBEMw5KBrLTLX2Tj1L(p7tQOT6pxNKrBsGd4BLyClO7iT8Tqaq7h7fKFNvn7qxrZl(cla7(MXOJsR7XzWHm7ottCaV9YkMumq6k52jk4qf2oJ27p4rIKI2IA7WXtF22RtUgzH)VDRWg(2iAMd7dxJAf6603yZo2FawbY35aK2N5KgGKyagR19hGDXzehVKTJ34q1JEhryj4q1YlDuHMz9WSGlDXYALmYFzRos2c0o6x5wK0vDRY2rrByUqXOTBKkcwnXq8BlsjX3kWjhsNaordC5tkvBmpRGVvat0zA(0eSTR7Df8DaWK94gbWDnUoT(D0WDe0(onnnSdTpfnDb89YMk3R8DJb)md(wb8UUHQJR7Df8DaWFHei7200XTxo8jCNTGsBBN1lDBNHihlSNyqAo88I)2enCHf890sgDCoS7wdRjWvZC0rO)85IYEL24yoEY0g6CqSTHDTVJaN9vZgbatmtmUfytOtBUoY(tm8ebjEvIWZ)9MPSV5YGNJnSC28K6kJwCSYNWxo5v6N7In)m1iKjG)qSCetA0HuhYkT(eJJCXMF(B2mDBpFaDz2fqPUR4fZ(OdtMpXT50E9pWTH8hF0JnHlM4Xq3GEh0I6yDytFWaEci9yDKUjEPH0nPi1lmc86cpeenC2bkPdAh483Gf0USJhOGUqIAwBibnsVxMpA85F)zuDlpBb11dEa9Yr2Kw0p0OZsoSXbiGl(QDue6DG)dHaUR)BWllGNYvSGATQV8)g87lIYN(fPGoWXRsbUgHNRR7a9zZuWW6YpqivqEW5Uy0zSv5xMBJa3lz33raIvFFpDbGu8M4wy4fJhCX3pEidh3RxVaTHk1x2aceW5TLWftuv71nvq34s3oA9UxGAhlajXLSBqE8rYUff(yJIJp4Xh7B1mk9OoK7Npzem06BUGlM0)0HV8KHukNoY1z4bGa2hh9m6HJZNGCyxOR(bPwGVpf019ePF6O1z6TtxCdZMhHAbKFZWJQjDwzj7Ord9CcOCpzQt9THgJlaU0zW)VtGuC6YLgMKgwB0jKN)6Ehq(u8scAlKKvBL056p(4bQpxSG6P(afs3J8i10X3TEmAcb1s78JhV2o9M81hF0RmTD3Yi01O6Tr(54MBu1QBpF8r3hi(hF0r36CrhMDi6IomirzqBFKIAOyGkHr6N1Mlg1ou4XBRpoZJeocvZJx(ftgD2lPVaJAcf2bhx)ZToN46pY4yHlCF55OZMRDad4in2Kq3XTI9lhidGLUa6CDI2NcKooDenVR1SQgXJp6r1WKXcNN)I3PVDftBGFw7a75PxRV4SEe9yDpBlhhq0z19APRQPEobtHrD3)nLSnXJE7kROKWkG5d(Dz4330)WNbrXu13ma18D2OmbAc7DcIfVsasJeXSNDpiqNKoVcZxcURNULxzBkFkTBSnEQMcCo77RBQ71StQbDrd94JtTtG(AE5Ur5z9GkSev78QBIzBaOeAyOKP)qABD1B92ZF9GgYW9RdS2U)jVyYzd5kBAWHCqoKbU881WT2ubTU(fPdhq0sZ96t0fYxm5uWeS7WxGN3J81EnnMROIenR8lE9aEG9DPxG7MCIS)n62O5nMiJ(y0zW9C4NXeHuD2U1FQnwuzYgG9qTEKL7lr)wAw4lg2RLMe(cCVPP4VxHAuM(a6CA2JU9F1CrSz6DgO8Hy)8vQNgXt4Kgqbfg75AgAEoObfu96RD9MJr11tplon1PDKKCmIBiFR)AJJCDkmyYCNB7jL7mo0)0x2xWrB0hoV4SbVSwHVvwyGDMd61)ahbzqxdhLv)MhRDPSWU(TEsnnv42Dt3Bi)YaqgA4EGKZLL3lFjLqHnrMF5OWcmsxj8ftgR5GejY2vHIxZqL913JiuiJCxPX5yLRwBN2LEGlX0oS)9597UckSxUxNa73goy)dCKHh(ESmTVRkWTQojr9DNVXjJv7LjE65iBXFwUXx3nd4SbGseFANEZtr7eTYP)QWqCYoQzu2PE1RW87CIV67LFw)MQW3oDRIJ0XD5p(OYnrKyY(AbPNxFppbe1B(oVyC7VLBI7Glo1N)E1OnpznawBChrDO82ycKO0VjOM8SFrqPLYPz13kvcFu)l(TIebvvMmAv0k2Y692cR3QhQL1vL3WoUJQaBSGlWckQkjEsnnQ7Jkg5DlVvL8JU0yRlVwmUW46wLwu3cseRdt)OQV3guzbNyR8OJC4zinz3MKA5yT9TouNwKMxdqYwCG2XuQuw13T3Qk5ehxatNpz8aAvCJ61evBGlYRbdd7pnrjI3KF3L067be391v6dXIWq3AJ1cFn07GgnHspF1efurFuF3DNuph9v0aPTxYljPEhqxuoAceR05FjVkD6cPvt7EJ7mPZ9qpbP7gmaYSJZ)qR9gAEVOXsFgyF8CI9f6U3P77Neim33x9lsi9AtXsv(a3ofsEbfjKx1HjNiSJ3gp(0U4ZB3UXwfLYyNVFE2gDFsDxMgxn)YeRgES8W3WSa9xCsAvr32gG7KHD(yh531r2Uh3CTHyf(7IYfs(LtgrA)ifN6z(P1PvEKR0V3(cQ5xeunxnkwenPTT5WXxFy795P5xxygLkGi)9NmS3bBb)9eZQ5ixfZYcCGIWgQIBBINKtPLpdyyrmTeaKxMCdENfGHxaWpI1zQqmDrGjHe5VQ6uJUo(AHeP5Z8hwJ(paFyzELahLqL8HnarCoG7Li1pe8L4guepPG16VQ(iX5i0bgrzt8Z6D)DR2ExkRt7y2E1mU2(AO5TTV(ZCV2loK1oVYUqDKzD(A04Qyq6efV1vr(W2PYdWgB0wVk6aRSD9Cy4KS2XE2lpEinKgmqVByAS2g0zs242izJ3NKSrgnf8F1iz8i3A5lK)AkRSACSCMWmglJ2LLPSLqCliMfvssSoziHBuI4V39VG(jxDSLtW8Q8hyBIPMuQ3s9f2)28wQVH(3MxY874EMezJ(sPhLyqZ2FSBV2w4gYBLcg8Q6tv2gC6B4Vg(Hn7gfRkwse0cv88DzQuR8gtAdsc3KvDZauN0wJ1SgwZ0nhMPQH)7Z53abS2wNhVtJ1OSPgetFZlTaxZR)GXoLrGSQOKrlKiyuSi8D2EwwlsP4gRfYUpMTtLXKeDFL1ALGy3BRCU9TOEnYX7U7RWm4HXKjZdKfjq1Nyn94YdfBqB8T9ofXFdMnAGLZbfAcGkPoz4WZQBiP9M0NlLY1ljEgK10olK14r12Miw9(Wd2(f3(N7JztN1go8Tnyy48wUH1foUqgYMHr03lVvQWuMobqFrKTkt5ZEP7coWtGIktb13Pyy6vLTggwJZfyLHMdSh2jhy(C6PPoFigEuyErLbAdLfTRXd71xqBvb6y84jdfHlyM4yuqFGiNWyl1vWQxlAgxCe0yKD8ITJihpIsEnpjLjMXsfojYzjURz(JwPuZEC68r22fylAvEpWv8kvwTz1AdhF9YUoPw0lrTscSlTSanIySKRJO10NvBwmzrnnXwjs9lSsNbIHIANXRXdgKcR)o45k95aDzRq7c3fwLZATn7947k6QAFaj6(tg1chtrfRy40yONkpVZySZIXJvgvvcwW4zrm7KavCmB291Ja6E9BxvAHv4gPiMOBqfn54pj6AFvDP)oLok0e1FWxKs)KqCsBSKvMyRO5EA(e3NSG6Qkpccj3Uk1T0fe90u6jG358zxi(nyqJ6c5Ry)J9JyTGiUkXoIynwfE3d5(HQi0CuhSjJE5y1X9H4EJen)PBa06KgGH3XpIPxcXWjfcSfRKsqFSPho8A16XWPzL6p9mrmL8jf1JpN9BSj(hbU98kwPEz14P5SO1gPmAwDpzUSk62hyDM5XEQORV98T2hOtotO9YtNGo5SbnWWI1yof0OMsnCADwUkl)TUdKIwusEAn6v3JPu7NKox0qWw5sSmAqwdmRfDOTGV(Z00moWr2A8KLUtDjM7TMMF)Pd2xsKm5qSkN3X4qsDLYDa7tUZxBMJpk6yFTXdy(bu2fMmli(owidZaX)K0lGicnPLQGuyu1gUV0fIwd83LOUUPt9gKYe95R)titetJdWqJbvlL6dpjuFsSHxg3gq8aHRqERdGU)e)zisUs9dzeb555x6yx26sitCc(fNlGqx9RJp7DS7m6R())]] )
+
+spec:RegisterPack( "Assassination", 20241206, [[Hekili:v3ZEZTTXX)zrtMHL02sMK6HTtLugh7Kw7wNMjYT5p6ubbrckHFIeGfauYQJg9z)3U79a3DyVdG0ujTjorYehUBFF7R745Jo)ZNF204QKZ)PXdhFWOXdpAVHVz)XJhD(zv3Vm58Zwgp5M4RGFjlEb8)FBzzCzzAwCvAEg(07NNhpfNLY8vftGrCDv1YYV9LV8Q0QRxD5EtYx8YY0fRMtVXKI4zv4FFYlp)SlxLoV6dzNFjpiC(zXRQUoV48ZolDX7GjoD60eXOtkNC(z4O3D04DhE03(4fF(UK4BGFCDAz18e4xsIF8Jp(rXygT7O3aJ5xsUnTeEgmt3(4fZYlE8I)A6vxxDxc()LFU5lHt8pKDBsw(IhVOScOepErv6I0SR(JpEXBxC5QYRnh)WXW4)P8hVyrEbSmtIlRGHcZB27)JAi8dVR(vgU7(JGx57tQQsaGPC1YL5fvsqBvzsr5JxC31Weof(VSC4jjzXxIOxvCXvjWFV8U4LlPfzxyDUViDM5Sp(vWS)jamWzxX5aalVOizcYoSg8Ox84f4ppeEjKIdGWsKVOh0W3S74xdp8hZbg9JxSmpFoT0e4QPt3b898vaS9(4IBskHF5NeKxa2QhvAjIv3Lzn5huZiBo5WBzm2rHGYrJm42ZsNppXaang3Wdbug)5RL)8nEN0xV7y8HVD(887cmNVwGeMZbW6lsMh)fK5LuC194F9QKm8h)7vPfjlsYQkTMHXKyNGrleLE7F7hmhXiCn(XuyklNaVDuzC1Qcs)6XlUnUiLEvJXp8neRfEP)obsaTFwbYfi4upWxjey(81Wk(RXa69RaRmf0YNdkvLKoEvs88QRtqf(FISDieiNE(3F(z5lHbKubQTteghuGc(BZxLGk8ZMTNaKZNfD5888P7jvRo9KhVOp9NYLjZNhjeWl3BwCgo2BYsVfb7NHI(ZHjWDAkIZUHE84hVyamDFh8BdHFvySOiDPaKotHaanLGsyo)vaDJrQ8z4uc)qqnXXC31iJcmSPv)NKVchdk(EDALq)UcjylI)cyLBbH1rcBLUmNZRatCoenq8okl5lvi5ut4qH)OIePfv4z778wQbgt2GCWX3UC5Cqk79jXvxdq98Bi7iFc0gf6GPa8FDmkdedsXi(nB25NbVpyMingS7liWtnF)OfWRVNecE8IEpEXoG(BcXqzg4QL0yqW82KOP5CZ2JxaS8H046tMvtuFYdp84fIzwybjkdnGShzUa4Oa94ap0JsWcUd14tX3KGMwrgCvoI53Q3cabZPRkiM4Fb()LxgNHcdaTjgvYZINdC8Rtqg))8pNCt680)LWah3ohxKNn)Egc586rgHaOfzuoMBuRU1d7J2inFyv6KBiOfjrtaPeKMy8CeHgOE1AoeTQsEI5hbgFItrvGJbZdQ3KECIWWg8si5(qpKB5OCO4AB8i5gxGQyCxhslbN8AA(zRUeivZwHUxut2sMnlri4a(oCzE0Y8u0cjzIqzszV6bb2lYMgnrID8Klx0QgXH5CFnToO8SwQCcq2LwDi6nsHoAZOqkcrZ9OX)d(LRQ3SFBrIiCybTGrXY1lkgmr5O1c7wTifT5EcjC8vtIELhsuXQLGbsuc4(jZtug(j7HBreonBAkYbwGUUcZsCrg4vBuC29k0UpUJ8mWQ71IDErKbuHGD0qR8L7rGNH6LqdtV40M6kJ9s9xd7FsSKu1CjWd0lME2AUVUCegZvT49aPPeKYThAjnQkpAAkSANc8UdDK((ffOOK((GfT5XlENG4GmTx7HPDvCrrEvlmnIIAyHzSalwcbduLUCEkkXFSq6c)CbnT7CR(weyjerRKaOCPV(hVldPNpoV5Fy0uovPPWXk21GAadCSdx5dlwwKFlk48Neqg6TPyNC0d4FriAQ29bPsgJT8fiWq(Mu70Ca26BCyR18mThE7LkbOinLsq29X(SuEe0htDvWMXS0jOVhNkENNt(Qz4q31f5RMcRxjGB5tiXE1UHnf8QG)fC1klfC)HXxuoN(akGChtGdG)7)GEDmUPSjkAMlxqrWjVPqdDoUSb)SiokEbs6p)SdomGtCUU(v7MmHf2WSc2W9qNr)gbF)iWjNTAogFWuGtBY52rQ7mdgYLa4mnA(Qj3CpyWmntP181ygTFJ5hNzq1pDEPPx8hASpGZyVojEQ7yheY)2wjnLllG50GBPSPP5xgbK6tHWMikfhD2H013x5O4nuX5HNR6K1y0UYPEyTvodBv75t1ZCmmQHo7BBTDTELRFKPn7dAxvUTq2WqXoOf)2T1vyuQm15c4qAq5fsbcSKhFljHOmDQ0W7G0X)lX0dZtiBVI1Qd7vnsQtxeNonk5weZINcAYOtQNQc0oGxWHzlquOxsweigKRRWm0)qQM2uLAuq4KpRAqJWgSIo4iANQ9T2Psh2ImTdw6y6GTiMK7c6QCfYZ41HSXSXfJPqm8)mWSjW9aX(yswGs9rYxwc28XnABkT)7Nm82WWLhz29hkCHysEb5piNtenC21Ir8okZCtJxa6(GpA3IOMilgXxMopTI8iCvjsOGLV4(7UobFHpPdi(pP9HwtYd6WKF3VKyQjbSBoHoACiht0rM5KqffcOdKyv28KYsKyiZ4BMmJVifyPpeSZUDSvr5(KSXZLM(ez6kg0zZUkQeDGEArY8Ar8Nj8rr9c(J27zKLIb2PFHjjwkXx5spjEvjeghGYXyna8KHn3rPIPUsMXRnkzSEspKHgPz6tyI701lBkhytYHnhXpO0ktOWZI0pItMRD4nyMYCsAf9z1btBV6UWLEgTHqF(KYKJrJckfNRdz4TfKqp4S(pxKmjTKgAdZRXYrfTunileZds0HT4pHe0LSo0BLYCWB9KflbHrnlC9YLQKfhxsvqarxDwt5DIoyQpTrngUG5oj8j1Z3(2pEXRTYyc)BZKa1AlfNi9RXqDwPZ6ql14eUG8jptTxNh2G0paxVABiR8Kso9KszlNHqdVosibC7Jrc6h1ETuAOZOvuuUSmToA7TPcdJZeH8)ki8RCLcucNqWUuTigZzdV2aVPR6N)vGz)2iG6lBGmeQ3VAXY66IG5WG8ia2y3K2CzEPiDB0JJSK10YIKK(KRrZCL0gTVwS13ciiSOjtld562YCXpT9GbErWYjWiYxvALvOFwoCdiefyOmzph2dg0gGzwMGdFWo6CPhV)fYB(83IwMOzRkUVHp)fPeOQf2kIXFwkscYLWwoL3NnHQyjT1JI2vAIkEGg395c)c1aBsrzsHVnr64KmlTiHW6WM)SKU51I8gzNJlo15cEZMUnBRidJMXaFQSQa0YNa2sesYGtd(IbPD)Ie43VNfv)31cO3obA7fZHdE)NtMVeF8)q1YfK2OSEXxgxMoHkImeUookEpJb2EKAmDZ)tht0UrLkEk2au0JfwFhdHV8zbZxSZ1DjQkHdEmV6QRDAofRkcyk6iDmYE)iECytdq7OqoL2P6oTvJIUTA81bmAKBTE0POz1YBsswIfVzEzoLTGsr)zGHx)28FqirHB6yWHS1h8Lk0ovw1nHf2pKx1ERaSXRgKC2pSTiHWNra0SJ6ytwDGckAenE7mXdTR9xhEfyXF1tFQg8LNbFv9DJK5q30lfw3ZbZheX2vs0xya1sI)Ej3fuIlCz37gNE0BAHv0qjmqyh8PBuBZq2DsAxbVc5rXvihIIMI2mDEmA6)D)m6C4mkrLXM7frdmzkM4smSfCVGSPZtTlOOldydnRkQnSHJ9itlsKP0EDijg7By9W388m1EsR1S1gJDaXBfjrXTHz0dcMtzQKb62c2GrA3ff2U6OxRj5ECDGB1dWwNiqawJD3w6mLi17izIpdXIFdkUA4Uc4vdqRepiCc90(7csCLixaKlJswGHnKVA(5Nb2DGpDw0vtMsBkjMFFJ2kwG13jCusCK25)wikb89kEoiWarIgTC1)5)ak0xM)fVyc3qzSa6NI6ZhOkY2Csberi8IXzLlsXSc7dq8o81cy85MXI4Pr)7vjjzyBGLrTXVLNy(LFjTXHk7MBOm8(kSKbocSLuk4BCb66pOqdM8NcbLDFeeolg(bpvm0BSwesFw93EIwFDgtAx5WnlqEsqMyJf5rzGGbicqydJkTzflLAnPtr1WmAevohp1dN4PdeTB8Wqa(qZi)BzPgB4UHCe7vnEpn5d74K7zm3yj0UJ)CieuPqaR(N7bAezNWiceSk(lLOba6HJmTGi)KQMTcMZygVESPX)2XMgXXMg9)8SPXcNja)RIbFP4CNW2T(Ksv3THX1VeOUPKdB9XKtF7Q5OZH0hOZ4R4iaT4Y4kZC5lMfUDYTBtXmqwaTUisSGIijcAiwC6yktxSGOcP4GfRqPk1KGHldpHUbiyCB42UltIitKE0JOtAg6qVO0(UvQx90FqgoZViobozjjtXpM6KmzqbME74eUa3MYTdOb2zlGGPDElDqOFwD4OolPAfgkNmNtIoCQo3V1ysksJuFoZ25TJgCvy16Zwe)LikhF260JmbJjZtxgP6jEM9NBhmE1qYhD0XbJ0wgND1kGddb(fdeQ6yQHroYAK3cbTGocrqqjLUat4B1syx(O5PGlsrcbmUTSBhkvHnJHpmKIO)q5pwdGj(280PrGEj3MUTddbRLNQHO2Xtn)atNUkrOiwQU5INux0KYC56RyYtJOpIzZL2HATTstj2MwsLRbHd6putWQfo5B(I1CMQhRH4RyM0pQPKtx2UZNE97QZecytfnqHE8HoTxtMZYRIKNssKupAyiZ2VJMMMN(nJ0kdJis8xIWZ7hULqr6KkNmgw3F4f5xTkrGKHAAC85EdE(um4z64fQY4V(agIlCWD(eO07QT25htmwaSEH4uhCto1uJ5n595Fw130DEnu9ugUqU7SXSqus3G1PuvVezM4wBMdoc3ZJGfKPk0e(IU7KXayVpfpNW4j5v0KBVv1yBDKqmLEFA18xCp5g52ju6qYAj7E8gHmvmbBWHk84mNjwgAdfNNVC18YeZfhh4Rmhi1xfLr)FRMEfEACDh7Rnh7LXxr5Nai)3uAps4fXk3tUwPDCtdmyFbGzpRe)BwlW6xslWEWvGrNzRYYsMBAuyzrAoqzVpcu(0jMDTCUsntn8v1KNz4V91XL42(v7fNDF00LL8bp1CuuA3zCBFQo1ROGax8x1JqNaCJHLwUNNmE0yn9puU9(qLZumN4Yzam7HoURprPuWT)dK)uQ5tJ2mxghZsR5OICra1cTMLsEABmJMK6q0VglzisDizUnYv1jlJiNrXs6s(acrLE83548fMXBurgpIk1hZi7EyjbGpisMezUVXWRsXsGisKUrjDnrIM1uMZtx799ls2DcLXEWueE1keJa(7PF1mQoUW1Q0MzzcvSXwdyehAhyOuxh64mjT)ceZN1F4Eh(8H7T)Z4iFONR7oCVrh(m)E2oyxbSRJxysEPbtSZNwk(tuR3DQeN0l9bUf1rrlXPtWjg4GlvDYvL(oNaJNcgd6Le5a2cy4ZUN8lty(w2ld4HUJga9FPlIf9O0uSUlVquYmCJCyp39o3UFW84AAp7AS05EvqpedxcTIISgfKBaz2GiJLnReNZdU1yuCIe804qH5q6IlO5fQAojJOW(6c5C3EWILCf68SzAfyZmdBpNh3bMbBGfwXj0GfX7Zg32pQ(2O868vZNkA7lzMvPI7HxjjwbZwMej)0nYmAhArDFPAUFBDVUHWP7JTdrsjb2wXh7azS(Gl8oXscMBfRPlvtbs1upxZ3mP8N5f102fRQsNlRjHB2ewZPsELFWKsa1iSQ6zJ0ZNjQG)Frwtu0G4(pxvlu2Zrmcwu3hwxW4sVGT6MXrOm0WDuL0rxQt7UMnoXIC0Z8vlWXby0Y40cUdCx11fGFlCnq7aZMeyEcWVXsmExAvwsjGqklk74l7m1texIn2iApLYuXr8wywUuEbTKjKMvBVCVI9aeeQFPXpbw5KPets3AwIeSQO5pEHIOpqYM)SZ2qYmtovhxc5Eqt9ygUOk7LnoQiQhWDhf4MxFh5LFxKjgWM7ehLnB(O8I)IyoFpyiFAz60KxwFxMShgmV0LIvynWuVG4oxsNVEMBEMEgNwV96IoMQ)MUubhARRnsuJzly1EINRZyTi9(ADh7vAaBEAAy2RBnH26ipCsZBqHphF5UFsUIwkxVNKXXU7w49gQmmwR3WMoOMyGNQC(PAumecjCu3tZQ3(wX1wL8E2x9Or2Ouig3ac)ACQSmoghruYKVZLFWNERmKeZ6myC0FQ39ul2a(E91EGVc2Y3i622PvzmpKPhD4(TTtaydTmvINlXa5IWGKMc)IvLdpmORtC1zjqvk1YA8uEFJHJg4g8RwKqDgdehMvD4sAC)fghfuXr(8fs5fklI5vupNj4LM9bTSRXlH9ukNLIHFZXUc2tmwG8FVm(k9jtt71ISr52DIvtnjbqjS9U4SkyAK7)whGyhZZPOZVyCYw92gNNjN0SIb84CaTPg4tTH)DPijSCvXTKdbZZrXerpB7RY8mKo52HnB3nYb6HDRZOg2AEmENH5H3AeLT82wRKUof6efvD0Y87SCF3AK6ytOXfC2rQTa50W63s9(prubpLrwM652bk4iJBhgTcyip5Re3MPunaD8bblqL4uNRYvHiznVq6ZHWWnseKPIykDGS0hJkQtCUMAlGPcVsHyi7Jq)GzUXFRI(3aC2Z(C(3HIyBrlpq6JsBE8jpaR(MMJ6ezxZynHFZZt2rCE07uyo8NV8xeN6Qx(3ewnWdGMv927KOT(yRX54PfrVEZfYoAV26c1UT(YBvco)2S0UiAEWl7h113i3iTVQFOroGRZg6K2xTYxTpbPzj3MwHx1cyu)tTC8FJVMJg0SL700uDJL3WLkmzmFVOJ4f3wTuCYIMO14QXTS2LFP5nXLyvsbD0Wf3(XJg9MZp7U4ImuJc8PfvrtxyCTa)h0sf)b9vil2k(50npXQQ8fIoBheWZab89E8J)vkd27)TuzLHvJE8FqDGeqYT1n53FqSHV)bOi1Wa7p6ld0RWb8RG7Hw2z(9DMM74SRT84mTnCz0D(Ed)8XDlK5m1HUOYQxLh)idVtO7TvyCoMcCGrpHj4se8m38NwgNLi8TGuxxjN(fWDn8C3Z4o7h(BgE4BL2o4XrpH86x9eb5Sc6QwGy9e1h7XgL7HMY1eLVdvLljWZ87KbANz3t(VBHaiT091J8BSbopACnVKbCMy)3cbDuADlUcEKz3yAIN5BRaXSIbkN9wprbpgz2y0E7nFSiPSRI2k44wqxNfgPq0xpi81UqOSDgCpkaAi03zfWLDS9My)EZiFf3(HVXuYmGWUjTXtSpoJSt3xpEJhtponcSJSJN2eUfjhDlDTEqydZVAcNB)5Wq6ygsyB7AjOwNC2H0PjNPVGcX1ngZt6036eZ0WtH0Swx4EtN(omX(7AkMvi4G7eMeQJUyyfDFbBe722uC13KVvu08d5Bgt)jE6BDI3uLSoc3B603Hj(3CrZ1ybxhLpp(9y2pDoBBX1PITSNLOJaxVnS8ayFLbh5XJhzKRnlGVZ8hOe)DCnCR(VZc4R5a64SB3KioZnFhK4oZEse1wL24zn(QPn8X(VUH7STJ8L(6)IzctTtzSZ0MYNqztK9deEItjEBciYm8JxqF7ybph7((8zP1vnSCpTVJp)KxAEaaE8JCJqLA6xGjQ)KgDDZlOYoFIvV))4h)gavxZ2tVlRUCwQBfB5Qp6fPZoX)wS96VJ)n3F4Ha7tC6jb28BqVD6IHzZfiqZP)vG(Jnr)MyOb63K2udDmy4PbingyFi8YC(dH9FdwX5Qo2z7DHy1SsksQLzl4U74J)Ud56ECcG6AhWZdoQwQ6JFZ3OulDgGv3y8c9JIktqmTuiwBCH30BhQiv(V2O(ib2FDN(AnYyHc43ebvF9NXAZjhpL1clfRZjH2CgSz4oNlAj3M90AD6(dfm48UCKL9VKMhhu56Xwi(hEGTE0WhBx2rVlK5z8uUqonmqVWh75JpzK)zV5XevUgVA4U7p8z8jQy3rddCWk8Vy6tXQfd60dg(8dH)eCkv7QK67a)gGak67DLjaLXSg9O1X73Bh2NIxBdwImVZZPH1pmy0L9s4qx2xtbPhEyNBDAx)E6pqt96XE(d647wpgd5QhEOUfbBiq8WdyZm0ZQrgo(KXc1iFNJxtsHB1)fKK6U1sC0rfM8C6FThEW)r59Hh809bNAcAVJtvMhIa)eTEr3tBBhMbzvMmMgFNL22NmzwSTipXtmpvbNoYyH8FIJADLerNzoo7tYkUY2Nk2tpz0HpN)gVO5SqN3vZp354TA(iRtZQCtTT615A9g2s6BdDv37CptJUCxRTNEs)(bACiTn0MxmKpB8Gt)UXdhqy5ME5T2ocnL9onuBpSUHuo9KanJsV(gxMEWEkcOE7C9UYHdtSVwzjJdMu5tpzCTXmEuSNPdun72WDv2loIqLT1LGkhYinz9cR2oxOsZDqIa1RgKBlKP2uVJRpHqZrJf(i(KEXBYH9Y2kMd7xhoy)D84kL4m0KBCrBoagSxsuF)AKNmgcAX7tpgzlH9dhFD)mGdhmyqiou)x98((QR4ZoCWZ77dNE2rWeVd)5s8)syiEzh1mkxlVbfMFJx81ux(j9YjnKMUt4BDul)Hh0oyvPUnr7fyZLtpzFquV578SXT)w(jUdo9GEE8T6KHYnLFko4g10tWvSMBJXEGcKBJTJkhK89EKikm3dhwhxoMZMGZQQhXdpei(ItglZ1XV5hKHUIPnWph3X7f4OKC6H9yocj9CJvDhMdoIX(4S8yUNZWuiQ72)mx4s849HM6NdrcF(q2T543X7)WxarXm93kg18DR0cjM0u6DIsKVsesJKPDn)oqGonB2kmL3ODf(g(xejWxXX3Wfp1lbUM9zyb18NMMsaBBdheoYX2pBgDJYtFX94msT0bb72PAXqh1Sd(p(Obnew7xN6t3Ua)0toCOWQsdwHh8E0HeE)KFsjCPfgNYaKASdZrNOx)oKKknIFaevEOnxoOh7RDKh6IMgZCCiE2rYmVGiulh3HUjTOAaUUnAr)rtKnRd)qOThPnh3SwWVbqPDH6fghdaHJA9B58qC6WETCoiof1qT1nckXJc87WxCQE8NWHGbuoq7jX257TsdINmnm2UJ1rxWg01OgLHtT2F9tYcNkpYDGZ1lI8Uc59p4RjmJ(8(DRdCYPe86D8BETBqsakIHijuaPW6M35fQBdiqO38Ua6KN8RciJ0TnT(sksQG)F5xVpmuvvfe07a4Y)6TgYD6hAKxBTPepxUpNcB8)WdskQobMQOw1xKpe5DnVBEcJU8yRpdww3vxg(P0Ll7gg4W2t76ZFpt23ooinVrY9nYzVfxWLc7yKY9QMPtWS9D)IQU)8Q7Cbb03VnaTyJNRDhWFXbEJEUjU2azuxycw52OjoX8MI7AJwFpG6UTUeByaclxRAalcyO3onAnJEHYine()U993Zo980Tndu51H9YQP3oS2xhWtGOch)B5nntxiT7mn09pdie3GmZMwbXh6OcaeV(CSUNa2KGK)B1Lct3vCKySWVvZBTfZI8rPzyG)mlYEBWifmnNtbrydVbwczgjukt7gFvMgOMxzlRJ1lL1h7TlT)EYPE(OKt0WYo)3jignZGRzC)XgC8ypXc7jfaJBcBiwH)US4NSFV7WefeRCsp7pToe8r(Yjr7auZVJtAcnAwepPTT1WthsT1xNMF30iI7WFUo2FyVDwd(7(2P4sbftZJ8GIGMs5nnXt2L0zxFmP5K6pmZZtVcpN6yadW8pH64siaMjGl8PQFv3WmDD81cjQnalUFj6ba8HvfRK4OAwzFyJPiPaW9kK6hdEdCfkINwsT0QUDE8ocZjJjftHz9()AdARlL1jnM13mJp1xltQT9D9JFyV8fuBQQ6PYr2j)SrByI5pGjJ2(Y8PLBanNSXwTRQMoqTGupp7iYMq9a6YJhYptdgy2brnGTbDMKnUns24TjjBKvlU(FBKmrWxT817DnLvLCskli0MXQ4xD(g)MLyT)qg)JKruV5FJDZcD1FZGtkXClk3BP)k6EDEl93j3RZlz)TAnjr2OyD94edSZhkk81TxBnCd51kbdrPo4ALhC5B4VwP1xZ(Qs05KaxMas4cjVllLgYBSOnijITSQlCIwPWgMnWAY2CCUUEhVTOIor7uRxlIKPbms1ebyLYLV5HG336gomRdicKt)gzvxnjJIIr3BnRDasL4MV7tghyLHy7PQm(KQq7ASJ3FjPXCYHbBPsLJdjqx88MECfGInOn(2wNIeUQ7Jg44CqPHaOwQtfN706Q0U1K(8zuUgKe5e2W6SuwteUABIy16H7S(a32N7J5hNkzPqTbJVwuysQIL(qMGLgKetu1e81kZNmDD838K1UO6Cu00y5Vdnmkhu5RWjI8bPt8r9TNfMxyvxcGnWZ1y3sndekjQ0Sz8ltD6Du1qYCoPBKl7U8W(Y6c2DqkqPJUZAaNmSxFSOvNmugRKDQ7rXHbYCAJnzrjvXn0hg55kJK5W7XnMmxj7gSzPzKoMiZ()Z)CYnPZt)xQDI(R1MNQfHT0cnigTyARxdn01WcMOngD3FVzP1pEuJoxGiq6INGuNf6kaqI344Rjr1PfKhlnQMYguOxpohzbY1PoWo4axzh2El0gBvi1NOs0ds(YA0lkpggni1C1I0k)uGUee62GaXGXbdzFTX0nfD1fBwHUFWQLuXCbs9KkpggObq3ymMVNyJIZUhX7(g1Mg8uPmHm2wUhbbGCEG(11WCHeUp2MkAfgMR1yPBrU5JNRNLKDOZhKh0eDNf8TAZNOpd)IaruMlqC3ySSf7zT4nb6vCDNEoA8dp425O9d1AYA2qFdQPCLowSs1etUXytX75YaX)Pr54c1dcJdJ8PMhfi3t(dxxZQfU8wTWNpwVZkZfMOTpfo93kg)S4COEgeKSIP6kMOKiEFtxifL3oWE02n3WbhkdAxSOO97z0Vrl8pc81zROQJtLbR5Qy02sKmrDpanF1KBUN6eO9cue8q66T23rNCO0QvGop6Kdh0adlxIjTXGAQSSz0pJiboFvvh0O4OfvS9iCV6EAItZrTfEdHq9o2QWTv9rN6V7kKA(mlbw(0HfinOh4tipyzF)UdgSTKifNaZ5jX3sCiLTpLgWMWD(9MjeIYnou3YdBBagGItNgLClf71uqmpn7u1b7stZ0r7ruVgUN0bIJRKRnYiGM97q(P0EBD0Z1DnvzDPHXqn61ORzBmT1sJHWtgZKmk2QaGbIhiefl6Ic09MKVaHexz2c7bKDE6Ko2evugzc8RcCmg)Z)PXh(g66w(8))]] )
