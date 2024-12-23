@@ -2394,7 +2394,7 @@ do
             items = { 211878, 211879, 211880 }
         },
         {
-            name = "cavedweller's_delight",
+            name = "cavedwellers_delight",
             items = { 212242, 212243, 212244 }
         }
     }
