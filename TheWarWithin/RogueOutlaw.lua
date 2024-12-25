@@ -574,8 +574,7 @@ spec:RegisterStateExpr( "rtb_buffs", function ()
 end )
 
 spec:RegisterStateExpr( "rtb_primary_remains", function ()
-    local baseTime = max( lastRoll or 0, action.roll_the_bones.lastCast or 0 )
-    return math.max( 0, baseTime + rollDuration - query_time )
+    return max( lastRoll, action.roll_the_bones.lastCast ) + rollDuration - query_time
 end )
 
 local abs = math.abs
