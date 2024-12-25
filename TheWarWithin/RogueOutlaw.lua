@@ -548,12 +548,21 @@ spec:RegisterCombatLogEvent( function( _, subtype, _,  sourceGUID, sourceName, _
     end
 
     if spellID == 315508 then
+        local now = GetTime()
+
         if subtype == "SPELL_AURA_APPLIED" then
-            lastRoll = GetTime()
+            lastRoll = now
             rollDuration = 30
         elseif subtype == "SPELL_AURA_REFRESH" then
-            rollDuration = max( 30, min( 39, 60 - ( GetTime() - lastRoll ) ) )
-            lastRoll = GetTime()
+            -- Calculate remaining pandemic extension duration
+            local pandemicExtension = min( 9, 60 - ( now - lastRoll ) )
+            rollDuration = 30 + pandemicExtension
+            lastRoll = now
+        end
+
+        -- Debug logging (optional, for development)
+        if Hekili.ActiveDebug then
+            Hekili:Debug( "Updated lastRoll to %.2f, rollDuration to %.2f", lastRoll, rollDuration )
         end
     end
 end )
@@ -565,7 +574,8 @@ spec:RegisterStateExpr( "rtb_buffs", function ()
 end )
 
 spec:RegisterStateExpr( "rtb_primary_remains", function ()
-    return max( lastRoll, action.roll_the_bones.lastCast ) + rollDuration - query_time
+    local baseTime = max( lastRoll or 0, action.roll_the_bones.lastCast or 0 )
+    return math.max( 0, baseTime + rollDuration - query_time )
 end )
 
 local abs = math.abs
@@ -588,7 +598,9 @@ spec:RegisterStateExpr( "rtb_buffs_shorter", function ()
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and bone.remains < primary - 0.1 then n = n + 1 end
+        if bone.up and bone.remains < primary - 0.2 then -- Slightly larger threshold
+            n = n + 1
+        end
     end
     return n
 end )
@@ -596,12 +608,14 @@ end )
 spec:RegisterStateExpr( "rtb_buffs_normal", function ()
     local n = 0
     local primary = rtb_primary_remains
+    local tolerance = 0.1  -- Threshold for "close enough"
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and abs( bone.remains - primary ) < 0.1 then n = n + 1 end
+        if bone.up and math.abs( bone.remains - primary ) <= tolerance then
+            n = n + 1
+        end
     end
-
     return n
 end )
 
@@ -633,7 +647,9 @@ spec:RegisterStateExpr( "rtb_buffs_longer", function ()
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and bone.remains > primary + 0.1 then n = n + 1 end
+        if bone.up and bone.remains > primary + 0.2 then -- Slightly larger threshold
+            n = n + 1
+        end
     end
     return n
 end )
@@ -843,6 +859,28 @@ spec:RegisterHook( "reset_precast", function()
     if buff.cold_blood.up then setCooldown( "cold_blood", action.cold_blood.cooldown ) end
 
     class.abilities.apply_poison = class.abilities[ action.apply_poison_actual.next_poison ]
+
+    -- Debugging for Roll the Bones
+    if Hekili.ActiveDebug and buff.roll_the_bones.up then
+        Hekili:Debug( "\nRoll the Bones Debugging:" )
+        Hekili:Debug( " - lastRoll: %.2f", lastRoll )
+        Hekili:Debug( " - rollDuration: %.2f", rollDuration )
+        Hekili:Debug( " - rtb_primary_remains: %.2f", rtb_primary_remains )
+
+        Hekili:Debug( " - Buff Status (vs. %.2f):", rollDuration )
+        for i = 1, 6 do
+            local bone = rtb_buff_list[ i ]
+            if buff[ bone ].up then
+                local bone_duration = buff[ bone ].duration
+                Hekili:Debug( "   * %-20s %5.2f : %5.2f %s",
+                    bone,
+                    buff[ bone ].remains,
+                    bone_duration,
+                    bone_duration < rollDuration and "shorter" or bone_duration > rollDuration and "longer" or "normal"
+                )
+            end
+        end
+    end
 
     -- Fan the Hammer.
     if query_time - lastShot < 0.5 and numShots > 0 then
@@ -1155,10 +1193,19 @@ spec:RegisterAbilities( {
         buff = "roll_the_bones",
 
         handler = function ()
-            for _, v in pairs( rtb_buff_list ) do
-                if buff[ v ].up then buff[ v ].expires = buff[ v ].expires + 30 end
+           for _, v in pairs( rtb_buff_list ) do
+                if buff[ v ].up then
+                -- Add 30 seconds but cap the total duration at 60 seconds.
+                local newExpires = buff[ v ].expires + 30
+                buff[ v ].expires = math.min( newExpires, query_time + 60 )
+                
+                -- Optional Debugging
+                if Hekili.ActiveDebug then
+                    Hekili:Debug( "Keep It Rolling applied to '%s': New expires = %.2f (capped at 60 seconds).", v, buff[ v ].expires )
+                end
             end
-        end,
+        end
+    end,
     },
 
     -- Talent: Teleport to an enemy within 10 yards, attacking with both weapons for a total of $<dmg> Physical damage over $d.    While Blade Flurry is active, also hits up to $s5 nearby enemies for $s2% damage.
