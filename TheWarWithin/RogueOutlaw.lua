@@ -901,17 +901,17 @@ spec:RegisterHook( "reset_precast", function()
         end
     end
 
-    if Hekili.ActiveDebug and buff.roll_the_bones.up then
-        Hekili:Debug( "\nRoll the Bones Buffs (vs. %.2f):", rollDuration )
-        for i = 1, 6 do
-            local bone = rtb_buff_list[ i ]
+   -- if Hekili.ActiveDebug and buff.roll_the_bones.up then
+   --     Hekili:Debug( "\nRoll the Bones Buffs (vs. %.2f):", rollDuration )
+   --     for i = 1, 6 do
+   --         local bone = rtb_buff_list[ i ]
 
-            if buff[ bone ].up then
-                local bone_duration = buff[ bone ].duration
-                Hekili:Debug( " - %-20s %5.2f : %5.2f %s", bone, buff[ bone ].remains, bone_duration, bone_duration < rollDuration and "shorter" or bone_duration > rollDuration and "longer" or "normal" )
-            end
-        end
-    end
+   --         if buff[ bone ].up then
+   --             local bone_duration = buff[ bone ].duration
+   --             Hekili:Debug( " - %-20s %5.2f : %5.2f %s", bone, buff[ bone ].remains, bone_duration, bone_duration < rollDuration and "shorter" or bone_duration > rollDuration and "longer" or "normal" )
+   --         end
+   --     end
+   -- end
 end )
 
 
