@@ -574,7 +574,8 @@ spec:RegisterStateExpr( "rtb_buffs", function ()
 end )
 
 spec:RegisterStateExpr( "rtb_primary_remains", function ()
-    return max( lastRoll, action.roll_the_bones.lastCast ) + rollDuration - query_time
+    local baseTime = max( lastRoll or 0, action.roll_the_bones.lastCast or 0 )
+    return max( 0, baseTime + rollDuration - query_time )
 end )
 
 local abs = math.abs
@@ -611,7 +612,7 @@ spec:RegisterStateExpr( "rtb_buffs_normal", function ()
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and math.abs( bone.remains - primary ) <= tolerance then
+        if bone.up and abs( bone.remains - primary ) <= tolerance then
             n = n + 1
         end
     end
@@ -1196,7 +1197,7 @@ spec:RegisterAbilities( {
                 if buff[ v ].up then
                 -- Add 30 seconds but cap the total duration at 60 seconds.
                 local newExpires = buff[ v ].expires + 30
-                buff[ v ].expires = math.min( newExpires, query_time + 60 )
+                buff[ v ].expires = min( newExpires, query_time + 60 )
                 
                 -- Optional Debugging
                 if Hekili.ActiveDebug then
