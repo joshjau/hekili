@@ -612,7 +612,7 @@ spec:RegisterStateExpr( "rtb_buffs_normal", function ()
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and abs( bone.remains - primary ) <= tolerance then
+        if bone.up and abs( bone.remains - primary ) < tolerance then
             n = n + 1
         end
     end
