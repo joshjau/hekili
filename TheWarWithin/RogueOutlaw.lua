@@ -608,11 +608,11 @@ end )
 spec:RegisterStateExpr( "rtb_buffs_normal", function ()
     local n = 0
     local primary = rtb_primary_remains
-    local tolerance = 0.1  -- Threshold for "close enough"
+    local tolerance = 0.2  -- Threshold for "close enough"
 
     for _, rtb in ipairs( rtb_buff_list ) do
         local bone = buff[ rtb ]
-        if bone.up and abs( bone.remains - primary ) < tolerance then
+        if bone.up and abs( bone.remains - primary ) <= tolerance then
             n = n + 1
         end
     end
