@@ -13,13 +13,13 @@ actions+=/ancestral_call
 actions+=/bag_of_tricks
 actions+=/potion
 actions+=/run_action_list,name=crane,strict=1,if=pet.chiji.up
-actions+=/jadefire_stomp,if=!settings.save_faeline|talent.awakened_jadefire&buff.awakened_jadefire.down|talent.jadefire_teachings&buff.jadefire_teachings.down
+actions+=/jadefire_stomp,if=(!settings.save_faeline|talent.awakened_jadefire&buff.awakened_jadefire.down|talent.jadefire_teachings&buff.jadefire_teachings.down)&(!talent.ancient_teachings|buff.ancient_teachings.remains<2)
 actions+=/call_action_list,name=aoe,strict=1,if=active_enemies>=3
 actions+=/call_action_list,name=st,strict=1,if=active_enemies<3
 
-actions.st+=/thunder_focus_tea
+actions.st+=/thunder_focus_tea,if=(!talent.ancient_teachings|buff.ancient_teachings.remains<2)
 actions.st+=/expel_harm,if=buff.thunder_focus_tea.up&buff.enveloping_mist.up&buff.renewing_mist.up&buff.chi_harmony.up
-actions.st+=/rising_sun_kick
+actions.st+=/rising_sun_kick,if=talent.ancient_teachings&buff.ancient_teachings.remains<3
 actions.st+=/rushing_wind_kick
 actions.st+=/tiger_palm,if=talent.awakened_jadefire.enabled&buff.jadefire_stomp.up&buff.teachings_of_the_monastery.stack<4|buff.teachings_of_the_monastery.stack<1
 actions.st+=/blackout_kick,if=((!talent.awakened_jadefire|buff.jadefire_stomp.down)&buff.teachings_of_the_monastery.up|buff.teachings_of_the_monastery.stack>3)&(!talent.rushing_wind_kick&cooldown.rising_sun_kick.remains>2*gcd.max|cooldown.rushing_wind_kick.remains>2*gcd.max)
@@ -28,11 +28,11 @@ actions.st+=/chi_burst
 actions.st+=/tiger_palm
 actions.st+=/sheiluns_gift,if=charges>=5&buff.shaohaos_lessons.down
 
-actions.aoe+=/thunder_focus_tea,if=active_enemies<=3
+actions.aoe+=/thunder_focus_tea,if=active_enemies<=3&(!talent.ancient_teachings|buff.ancient_teachings.remains<2)
 actions.aoe+=/expel_harm,if=buff.thunder_focus_tea.up&buff.enveloping_mist.up&buff.renewing_mist.up&buff.chi_harmony.up&active_enemies<=3
 actions.aoe+=/sheiluns_gift,if=charges>=5&buff.shaohaos_lessons.down
 actions.aoe+=/vivify,if=buff.zen_pulse.up
-actions.aoe+=/rising_sun_kick,if=active_enemies<=3|settings.aoe_rsk
+actions.aoe+=/rising_sun_kick,if=(active_enemies<=3|settings.aoe_rsk)&(talent.ancient_teachings&buff.ancient_teachings.remains<3)
 actions.aoe+=/rushing_wind_kick,if=active_enemies<=3|settings.aoe_rsk
 actions.aoe+=/tiger_palm,if=talent.awakened_jadefire.enabled&buff.jadefire_stomp.up&buff.teachings_of_the_monastery.stack<4|buff.teachings_of_the_monastery.stack<1
 actions.aoe+=/blackout_kick,if=(!talent.rushing_wind_kick&cooldown.rising_sun_kick.remains>2*gcd.max|cooldown.rushing_wind_kick.remains>2*gcd.max)&(buff.teachings_of_the_monastery.stack>3)
@@ -40,7 +40,7 @@ actions.aoe+=/chi_burst
 actions.aoe+=/spinning_crane_kick
 
 actions.crane+=/renewing_mist,if=time_to_max_charges<=gcd.max
-actions.crane+=/thunder_focus_tea,if=talent.ancient_teachings&buff.ancient_teachings.remains<gcd.max
+actions.crane+=/thunder_focus_tea,if=talent.ancient_teachings&(buff.ancient_teachings.down|buff.ancient_teachings.remains<gcd.max)
 actions.crane+=/essence_font,if=talent.ancient_teachings&buff.ancient_teachings.remains<gcd.max
 actions.crane+=/jadefire_stomp,if=talent.ancient_teachings&buff.ancient_teachings.remains<gcd.max
 actions.crane+=/enveloping_mist,if=buff.invoke_chiji.stack>1
