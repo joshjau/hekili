@@ -1215,8 +1215,7 @@ local function timeToInterrupt()
     local casting = state.debuff.casting
     if casting.down or casting.v2 == 1 then return 3600 end
     if casting.v3 == 1 then return 0 end
-    if castRemainingThreshold == 0 then return max( 0, casting.remains - 0.25 )
-    else return max( 0, casting.remains - ( casting.duration * ( 1 - castRemainingThreshold ) ) ) end
+    return max( 0, casting.remains - castRemainingThreshold )
 end
 state.timeToInterrupt = timeToInterrupt
 
