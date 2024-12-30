@@ -1210,10 +1210,13 @@ state.interrupt = interrupt
 
 -- Use this for readyTime in an interrupt action; will interrupt casts at end of cast and channels ASAP.
 local function timeToInterrupt()
+    local castRemainingThreshold = 0
+    castRemainingThreshold = Hekili.DB.profile.toggles.interrupts.castRemainingThreshold
     local casting = state.debuff.casting
     if casting.down or casting.v2 == 1 then return 3600 end
     if casting.v3 == 1 then return 0 end
-    return max( 0, casting.remains - 0.25 )
+    if castRemainingThreshold == 0 then return max( 0, casting.remains - 0.25 )
+    else return max( 0, casting.remains - ( casting.duration * ( 1 - castRemainingThreshold ) ) ) end
 end
 state.timeToInterrupt = timeToInterrupt
 
