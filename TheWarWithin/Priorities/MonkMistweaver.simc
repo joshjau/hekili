@@ -1,7 +1,9 @@
 actions.precombat+=/potion
 actions.precombat+=/chi_burst
+actions.precombat+=/touch_of_death
 
 actions+=/spear_hand_strike
+actions+=/touch_of_death
 actions+=/use_items
 actions+=/blood_fury
 actions+=/berserking
@@ -16,6 +18,7 @@ actions+=/call_action_list,name=aoe,strict=1,if=active_enemies>=3
 actions+=/call_action_list,name=st,strict=1,if=active_enemies<3
 
 actions.st+=/thunder_focus_tea
+actions.st+=/expel_harm,if=buff.thunder_focus_tea.up&buff.enveloping_mist.up&buff.renewing_mist.up&buff.chi_harmony.up
 actions.st+=/rising_sun_kick
 actions.st+=/rushing_wind_kick
 actions.st+=/tiger_palm,if=talent.awakened_jadefire.enabled&buff.jadefire_stomp.up&buff.teachings_of_the_monastery.stack<4|buff.teachings_of_the_monastery.stack<1
@@ -23,8 +26,11 @@ actions.st+=/blackout_kick,if=((!talent.awakened_jadefire|buff.jadefire_stomp.do
 actions.st+=/vivify,if=settings.single_zen_pulse&buff.zen_pulse.up
 actions.st+=/chi_burst
 actions.st+=/tiger_palm
+actions.st+=/sheiluns_gift,if=charges>=5&buff.shaohaos_lessons.down
 
 actions.aoe+=/thunder_focus_tea,if=active_enemies<=3
+actions.aoe+=/expel_harm,if=buff.thunder_focus_tea.up&buff.enveloping_mist.up&buff.renewing_mist.up&buff.chi_harmony.up&active_enemies<=3
+actions.aoe+=/sheiluns_gift,if=charges>=5&buff.shaohaos_lessons.down
 actions.aoe+=/vivify,if=buff.zen_pulse.up
 actions.aoe+=/rising_sun_kick,if=active_enemies<=3|settings.aoe_rsk
 actions.aoe+=/rushing_wind_kick,if=active_enemies<=3|settings.aoe_rsk
