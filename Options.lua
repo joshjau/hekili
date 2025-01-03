@@ -739,6 +739,7 @@ do
                 },
 
                 filterCasts = true,
+                castRemainingThreshold = 0.25,
                 castFilters = {
                     [40167] = {
                     desc = "Grim Batol - Twilight Beguiler",
@@ -8701,6 +8702,30 @@ do
                                 ( GetSpellInfo( 427459 ) or "Toxic Bloom" ) ),
                             width = 2,
                             order = 4
+                        },
+                        lb3 = {
+                            type = "description",
+                            name = "",
+                            width = "full",
+                            order = 4.1
+                        },
+
+                        indent3 = {
+                            type = "description",
+                            name = "",
+                            width = 1,
+                            order = 4.2,
+                        },
+                        castRemainingThreshold = {
+                            type = "range",
+                            name = "Interrupt Timing",
+                            desc = "By default, interrupts are recommended when an enemy's cast has 0.25 seconds (or less) remaining.\n\n"
+                                    .. "If set to 2, an interrupt could be recommended when the cast has less than 2 seconds remaining.",
+                            min = 0.25,
+                            max = 3,
+                            step = 0.25,
+                            width = 2,
+                            order = 4.3
                         },
 
                         defensives = {
