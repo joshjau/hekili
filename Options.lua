@@ -8718,10 +8718,9 @@ do
                         },
                         castRemainingThreshold = {
                             type = "range",
-                            name = "Interrupt timing",
-                            desc = "This setting controls the point at which your interrupt will be recommended.\n\n"
-                                    .. "If set to 2, it would recommend your interrupt it when there are 2 seconds or less remaining on the cast. A smaller value is a 'later' interrupt which is more efficient but easier to make a mistake with.\n\n"
-                                    .. "The default value is 0.25.",
+                            name = "Interrupt Timing",
+                            desc = "By default, interrupts are recommended when an enemy's cast has 0.25 seconds (or less) remaining.\n\n"
+                                    .. "If set to 2, an interrupt could be recommended when the cast has less than 2 seconds remaining.",
                             min = 0.25,
                             max = 3,
                             step = 0.25,
