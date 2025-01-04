@@ -2268,7 +2268,25 @@ spec:RegisterAbilities( {
         handler = function()
             gain( 1, "soul_shards" )
         end
-    }
+    },
+
+    felstorm = {
+        id = 89751,
+        cast = 0,
+        cooldown = function() return 30 * ( talent.reign_of_tyranny.enabled and 0.9 or 1 ) end,
+        gcd = "off", -- Pet ability, no GCD
+
+        startsCombat = true,
+        texture = 236298,
+
+        readyTime = function() return buff.fiendish_wrath.remains end,
+
+        usable = function() return pet.alive and pet.real_pet == "felguard", "requires a living felguard" end,
+        handler = function()
+            applyBuff( "felstorm" )
+            if cooldown.guillotine.remains < 5 then setCooldown( "guillotine", 8 ) end
+        end,
+    },
 } )
 
 
