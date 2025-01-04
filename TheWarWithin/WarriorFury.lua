@@ -546,16 +546,6 @@ spec:RegisterSetBonuses( "tier29_2pc", 393708, "tier29_4pc", 393709 )
 -- 2-Set - Execute's chance to critically strike increased by 10%.
 -- 4-Set - Sudden Death's chance to reset the cooldown of Execute and make it usable on any target, regardless of health, is greatly increased.
 
-spec:RegisterGear( "tier30", 202446, 202444, 202443, 202442, 202441, 217218, 217220, 217216, 217217, 217219 )
-spec:RegisterSetBonuses( "tier30_2pc", 405579, "tier30_4pc", 405580 )
---(2) Rampage damage and critical strike chance increased by 10%.
---(4) Rampage causes your next Bloodthirst to have a 10% increased critical strike chance, deal 25% increased damage and generate 2 additional Rage. Stacking up to 10 times.
-spec:RegisterAura( "merciless_assault", {
-    id = 409983,
-    duration = 14,
-    max_stack = 10
-} )
-
 spec:RegisterGear( "tier31", 207180, 207181, 207182, 207183, 207185 )
 spec:RegisterSetBonuses( "tier31_2pc", 422925, "tier31_4pc", 422926 )
 -- (2) Odyn's Fury deals 50% increased damage and causes your next 3 Bloodthirsts to deal 150% additional damage and have 100% increased critical strike chance against its primary target.
@@ -567,27 +557,6 @@ spec:RegisterAura( "furious_bloodthirst", {
 } )
 -- (4) Bloodthirst critical strikes reduce the cooldown of Odyn's Fury by 2.5 sec.
 
-
-spec:RegisterGear( 'tier20', 147187, 147188, 147189, 147190, 147191, 147192 )
-    spec:RegisterAura( "raging_thirst", {
-        id = 242300,
-        duration = 8
-        } ) -- fury 2pc.
-    spec:RegisterAura( "bloody_rage", {
-        id = 242952,
-        duration = 10,
-        max_stack = 10
-        } ) -- fury 4pc.
-
-spec:RegisterGear( 'tier21', 152178, 152179, 152180, 152181, 152182, 152183 )
-    spec:RegisterAura( "slaughter", {
-        id = 253384,
-        duration = 4
-    } ) -- fury 2pc dot.
-    spec:RegisterAura( "outrage", {
-        id = 253385,
-        duration = 8
-    } ) -- fury 4pc.
 
 spec:RegisterGear( "ceannar_charger", 137088 )
 spec:RegisterGear( "timeless_stratagem", 143728 )
@@ -1931,21 +1900,6 @@ spec:RegisterSetting( "charge_min_range", 10, {
     width = "full",
 } )
 
-
-spec:RegisterSetting( "t30_bloodthirst_crit", 95, {
-    name = strformat( "%s Critical Threshold (Tier 30)", Hekili:GetSpellLinkWithTexture( spec.abilities.bloodthirst.id ) ),
-    desc = strformat( "By default, if you have four pieces of Tier 30 equipped, |W%s|w and |W%s|w will be recommended when their chance to crit is |cFFFFD10095%%|r or higher.\n\n"
-            .. "Your (old) tier set and %s can bring you over the 95%% threshold. If |W%s|w is talented, these crits will proc a %s for additional damage. "
-            .. "Lowering this percentage slightly may be helpful if your base Critical Strike chance is very low. However, if set too low, you may use these abilities but "
-            .. "fail to crit.",
-            spec.abilities.bloodthirst.name, spec.abilities.bloodbath.name, Hekili:GetSpellLinkWithTexture( spec.auras.recklessness.id ),
-            Hekili:GetSpellLinkWithTexture( spec.auras.bloodcraze.id ), Hekili:GetSpellLinkWithTexture( spec.auras.gushing_wound.id ) ),
-    type = "range",
-    min = 0,
-    max = 100,
-    step = 1,
-    width = "full",
-} )
 
 spec:RegisterStateExpr( "bloodthirst_crit_threshold", function()
     return settings.t30_bloodthirst_crit or 95
