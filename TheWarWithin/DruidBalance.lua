@@ -1388,11 +1388,11 @@ end )
 
 
 spec:RegisterStateExpr( "lunar_eclipse", function ()
-    return 0
+    return eclipse.wrath_counter or 0
 end )
 
 spec:RegisterStateExpr( "solar_eclipse", function ()
-    return 0
+    return eclipse.starfire_counter or 0
 end )
 
 spec:RegisterStateExpr( "energize_amount", function ()
@@ -1519,9 +1519,14 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
     starfire_counter = 2,
 
     reset = setfenv( function()
-        eclipse.starfire_counter = GetSpellCount( 197628 ) or 0
-        eclipse.wrath_counter    = GetSpellCount(   5176 ) or 0
+        -- Get actual spell counts from game
+        local sf_count = GetSpellCount( 197628 ) or 0
+        local wrath_count = GetSpellCount( 5176 ) or 0
+        
+        eclipse.starfire_counter = sf_count
+        eclipse.wrath_counter = wrath_count
 
+        -- Determine correct state based on buffs and counters
         if buff.eclipse_solar.up and buff.eclipse_lunar.up then
             eclipse.state = "IN_BOTH"
             state:QueueAuraExpiration( "ca_inc", ExpireCelestialAlignment, buff.ca_inc.expires )
@@ -1532,23 +1537,38 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
             eclipse.state = "IN_LUNAR"
             state:QueueAuraExpiration( "eclipse_lunar", ExpireEclipseLunar, buff.eclipse_lunar.expires )
         else
-            eclipse.state = "ANY_NEXT"
-            if eclipse.starfire_counter == 0 and eclipse.wrath_counter == 0 then
-                if Hekili.ActiveDebug then Hekili:Debug( "Resetting from %d / %d to ANY_NEXT.", eclipse.starfire_counter, eclipse.wrath_counter ) end
+            -- If no Eclipse is active, determine next state based on counters
+            if sf_count == 0 and wrath_count == 0 then
+                eclipse.state = "ANY_NEXT"
+                if Hekili.ActiveDebug then Hekili:Debug( "Resetting from %d / %d to ANY_NEXT.", sf_count, wrath_count ) end
                 eclipse.reset_stacks()
+            elseif sf_count == 0 then
+                eclipse.state = "SOLAR_NEXT"
+            elseif wrath_count == 0 then
+                eclipse.state = "LUNAR_NEXT"
+            else
+                eclipse.state = "ANY_NEXT"
             end
         end
 
+        -- Reset empower tracking
         buff.eclipse_solar.empowerTime = 0
         buff.eclipse_lunar.empowerTime = 0
 
-        if buff.eclipse_solar.up and action.starsurge.lastCast > buff.eclipse_solar.applied then buff.eclipse_solar.empowerTime = action.starsurge.lastCast end
-        if buff.eclipse_lunar.up and action.starsurge.lastCast > buff.eclipse_lunar.applied then buff.eclipse_lunar.empowerTime = action.starsurge.lastCast end
+        if buff.eclipse_solar.up and action.starsurge.lastCast > buff.eclipse_solar.applied then 
+            buff.eclipse_solar.empowerTime = action.starsurge.lastCast 
+        end
+        if buff.eclipse_lunar.up and action.starsurge.lastCast > buff.eclipse_lunar.applied then 
+            buff.eclipse_lunar.empowerTime = action.starsurge.lastCast 
+        end
     end, state ),
 
     reset_stacks = setfenv( function()
-        eclipse.wrath_counter = 2
-        eclipse.starfire_counter = 2
+        -- Only reset counters if we're truly in a reset state
+        if eclipse.state == "ANY_NEXT" then
+            eclipse.wrath_counter = 2
+            eclipse.starfire_counter = 2
+        end
     end, state ),
 
     trigger_both = setfenv( function( duration )
@@ -1591,10 +1611,15 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
     advance = setfenv( function()
         if Hekili.ActiveDebug then Hekili:Debug( "Eclipse Advance (Pre): %s - Starfire(%d), Wrath(%d), Solar(%.2f), Lunar(%.2f)", eclipse.state, eclipse.starfire_counter, eclipse.wrath_counter, buff.eclipse_solar.remains, buff.eclipse_lunar.remains ) end
 
+        -- Check for Lunar's Calling talent
+        local has_lunar_calling = talent.lunar_calling.enabled
+
         if not ( eclipse.state == "IN_SOLAR" or eclipse.state == "IN_LUNAR" or eclipse.state == "IN_BOTH" ) then
             local initial = eclipse.state
 
-            if eclipse.starfire_counter == 0 and ( initial == "SOLAR_NEXT" or initial == "ANY_NEXT" ) then
+            -- Only allow Solar Eclipse if we're explicitly in SOLAR_NEXT or have completed Starfire requirements
+            -- With Lunar's Calling, we don't want to enter Solar Eclipse from Starfire
+            if eclipse.starfire_counter == 0 and not has_lunar_calling and ( initial == "SOLAR_NEXT" or (initial == "ANY_NEXT" and eclipse.wrath_counter > 0) ) then
                 applyBuff( "eclipse_solar", class.auras.eclipse_solar.duration + buff.eclipse_solar.remains )
                 if set_bonus.tier29_4pc > 0 then applyBuff( "touch_the_cosmos" ) end
                 state:RemoveAuraExpiration( "eclipse_solar" )
@@ -1612,7 +1637,9 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 end
             end
 
-            if eclipse.wrath_counter == 0 and ( initial == "LUNAR_NEXT" or initial == "ANY_NEXT" ) then
+            -- Only allow Lunar Eclipse if we're explicitly in LUNAR_NEXT or have completed Wrath requirements
+            -- With Lunar's Calling, we want to prioritize Lunar Eclipse
+            if eclipse.wrath_counter == 0 and ( initial == "LUNAR_NEXT" or (initial == "ANY_NEXT" and (eclipse.starfire_counter > 0 or has_lunar_calling)) ) then
                 applyBuff( "eclipse_lunar", class.auras.eclipse_lunar.duration + buff.eclipse_lunar.remains )
                 if set_bonus.tier29_4pc > 0 then applyBuff( "touch_the_cosmos" ) end
                 state:RemoveAuraExpiration( "eclipse_lunar" )
@@ -1630,6 +1657,7 @@ spec:RegisterStateTable( "eclipse", setmetatable( {
                 end
             end
 
+            -- Only reset counters if we've actually entered a new Eclipse state
             if eclipse.state ~= initial then
                 eclipse.starfire_counter = 0
                 eclipse.wrath_counter = 0
